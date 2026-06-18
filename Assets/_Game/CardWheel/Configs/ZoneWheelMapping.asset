@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44cdff1a66885c54f92ccfbb4c3d6a6a, type: 3}
+  m_Name: ZoneWheelMapping
+  m_EditorClassIdentifier: 
+  bronzeConfig: {fileID: 11400000, guid: 28a0f212a642421449dfdc753c0d6916, type: 2}
+  silverConfig: {fileID: 11400000, guid: ee611defb7ba1af4fb8f6b5de7c00089, type: 2}
+  goldConfig: {fileID: 11400000, guid: f5519fbc6c0af72469ce60880dca5710, type: 2}

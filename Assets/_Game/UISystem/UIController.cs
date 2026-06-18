@@ -24,6 +24,7 @@ namespace com.core.ui
 
         public UIController()
         {
+            Debug.Log($"UIController ctor");
             Initialize();
         }
         
