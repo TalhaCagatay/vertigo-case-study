@@ -102,7 +102,6 @@ namespace _Game.CardWheel.Controller
             {
                 SetState(WheelState.GameOver);
                 BombDetonated?.Invoke();
-                SpinCompleted?.Invoke(landedSlice);
             }
             else
             {
@@ -110,10 +109,9 @@ namespace _Game.CardWheel.Controller
                 var scaledAmount = Mathf.RoundToInt(landedSlice.Amount * multiplier);
 
                 AddReward(landedSlice, scaledAmount);
-
                 SetState(WheelState.Result);
-                SpinCompleted?.Invoke(landedSlice);
             }
+            SpinCompleted?.Invoke(landedSlice);
         }
 
         private void AddReward(WheelSliceData slice, int scaledAmount)

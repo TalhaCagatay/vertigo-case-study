@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Game.CardWheel.Data;
 using com.core.ui;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -56,6 +57,7 @@ namespace _Game.CardWheel.UIs
 
         public void RebuildRewardPanel(IReadOnlyList<AccumulatedReward> rewards)
         {
+            Debug.Log($"[TEST] RebuildRewardPanel");
             foreach (var entry in _rewardEntries) Destroy(entry.gameObject);
             _rewardEntries.Clear();
 
@@ -76,15 +78,16 @@ namespace _Game.CardWheel.UIs
 
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardType, int addedAmount, Action onComplete)
         {
-            var flyingIcon = new GameObject("FlyingRewardIcon", typeof(Image));
-            flyingIcon.transform.SetParent(transform, false);
+            var animationIcon = new GameObject("AnimationRewardIcon", typeof(Image));
+            animationIcon.transform.SetParent(transform, false);
 
-            var flyingImage = flyingIcon.GetComponent<Image>();
+            var flyingImage = animationIcon.GetComponent<Image>();
             flyingImage.sprite = sliceIcon;
             flyingImage.SetNativeSize();
+            flyingImage.transform.localScale *= 0.5f;
 
             var    canvas       = GetComponentInParent<Canvas>();
-            Camera canvasCamera = canvas?.worldCamera ?? null;
+            Camera canvasCamera = canvas?.worldCamera;
 
             var startScreenPos = RectTransformUtility.WorldToScreenPoint(canvasCamera, sliceWorldPosition);
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle
@@ -95,36 +98,25 @@ namespace _Game.CardWheel.UIs
                      out var localStart
                     ))
             {
-                flyingIcon.transform.localPosition = localStart;
+                animationIcon.transform.localPosition = localStart;
             }
 
-            var           targetEntry = _rewardEntries.Find(e => e.Label.Contains(rewardType));
-            RectTransform targetIconRect;
-            if (targetEntry != null)
-            {
-                targetIconRect = targetEntry.IconRectTransform;
-            }
-            else if (_rewardEntries.Count > 0)
-            {
-                targetIconRect = _rewardEntries[^1].IconRectTransform;
-            }
-            else
-            {
-                targetIconRect = (RectTransform)rewardPanelContainer;
-            }
+            var           targetEntry    = _rewardEntries.Find(e => e.Label.Contains(rewardType));
+            RectTransform targetIconRect = targetEntry.IconRectTransform;
 
             var iconCorners = new Vector3[4];
             targetIconRect.GetWorldCorners(iconCorners);
             var iconCenterWorld = (iconCorners[0] + iconCorners[2]) * 0.5f;
 
             var seq = DOTween.Sequence();
-            seq.Append(flyingIcon.transform.DOMove(iconCenterWorld, flyDuration).SetEase(Ease.InBack));
-            seq.Join(flyingIcon.transform.DOScale(Vector3.one * 0.5f, flyDuration).SetEase(Ease.InBack));
+            seq.Append(animationIcon.transform.DOMove(iconCenterWorld, flyDuration).SetEase(Ease.InBack));
+            seq.Join(animationIcon.transform.DOScale(Vector3.one * 0.5f, flyDuration).SetEase(Ease.InBack));
             seq.OnComplete
                 (
                  () =>
                  {
-                     Destroy(flyingIcon);
+                     Destroy(animationIcon);
+                     rewardPanelContainer.GetComponent<VerticalLayoutGroup>();
                      targetEntry.PlayAddAnimation(addedAmount, onComplete);
                  }
                 );

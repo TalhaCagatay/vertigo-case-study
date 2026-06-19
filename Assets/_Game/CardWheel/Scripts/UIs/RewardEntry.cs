@@ -8,14 +8,24 @@ namespace _Game.CardWheel.UIs
 {
     public class RewardEntry : MonoBehaviour
     {
-        [SerializeField] private Image    iconImage;
-        [SerializeField] private TMP_Text amountText;
+        [SerializeField] private Image                 iconImage;
+        [SerializeField] private TMP_Text              amountText;
+        [SerializeField] private HorizontalLayoutGroup horizontalLayoutGroup;
 
         private int _currentAmount;
 
         public string Label { get; private set; }
 
         public RectTransform IconRectTransform => (RectTransform)iconImage.transform;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            iconImage             = GetComponentInChildren<Image>();
+            amountText            = GetComponentInChildren<TMP_Text>();
+            horizontalLayoutGroup = GetComponent<HorizontalLayoutGroup>();
+        }
+#endif
 
         public void Setup(Sprite icon, int amount, string label)
         {
@@ -32,7 +42,6 @@ namespace _Game.CardWheel.UIs
 
             var seq = DOTween.Sequence();
 
-            // Count-up animation
             seq.Join
                 (
                  DOTween.To
@@ -48,10 +57,19 @@ namespace _Game.CardWheel.UIs
                      ).SetEase(Ease.OutCubic)
                 );
 
-            seq.Join(iconImage.transform.DOScale(1.3f, 0.2f).SetEase(Ease.OutBack));
-            seq.Append(iconImage.transform.DOScale(1f, 0.3f).SetEase(Ease.InBack));
+            horizontalLayoutGroup.enabled = false;
+            iconImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            seq.Join(iconImage.rectTransform.DOScale(1.3f, 0.2f).SetEase(Ease.OutBack));
+            seq.Append(iconImage.rectTransform.DOScale(1f, 0.3f).SetEase(Ease.InBack));
 
-            seq.OnComplete(() => onComplete?.Invoke());
+            seq.OnComplete
+                (
+                 () =>
+                 {
+                     onComplete?.Invoke();
+                     horizontalLayoutGroup.enabled = true;
+                 }
+                );
         }
     }
 }

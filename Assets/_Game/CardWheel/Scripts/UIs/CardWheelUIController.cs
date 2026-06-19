@@ -139,7 +139,7 @@ namespace _Game.CardWheel.UIs
                      if (!alreadyExists)
                      {
                          Debug.Log($"[TEST] Adding new reward type");
-                         _screen.AddRewardEntry(landedSlice.Icon, scaledAmount, landedSlice.Label);
+                         _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.Label);
                      }
 
                      _screen.PlayRewardAnimation
