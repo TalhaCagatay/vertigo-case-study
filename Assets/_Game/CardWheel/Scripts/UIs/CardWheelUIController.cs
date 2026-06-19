@@ -49,7 +49,6 @@ namespace _Game.CardWheel.UIs
 
             PopulateZoneBar(zone);
 
-            _screen.UpdateZoneDisplay(_cardWheelController.CurrentZone);
             _screen.RebuildRewardPanel(_cardWheelController.GetAccumulatedRewards());
             PopulateZoneBar(zone);
             UpdateButtonStates();
@@ -58,12 +57,14 @@ namespace _Game.CardWheel.UIs
             Debug.Log("[CardWheelUIController] Initialized");
         }
 
-        private void StateChanged(WheelState state) => UpdateButtonStates();
+        private void StateChanged(WheelState state)
+        {
+            if (state == WheelState.Result) return;
+            UpdateButtonStates();
+        }
 
         private void ZoneChanged(int zone)
         {
-            _screen.UpdateZoneDisplay(zone);
-
             var config = _cardWheelController.CurrentTierConfig;
             _screen.SetupWheel(config, zone);
 
@@ -108,7 +109,7 @@ namespace _Game.CardWheel.UIs
             _screen.SetupWheel(config, zone);
 
             _screen.ResetWheel();
-            _screen.UpdateZoneDisplay(_cardWheelController.CurrentZone);
+            PopulateZoneBar(zone);
             _screen.RebuildRewardPanel(_cardWheelController.GetAccumulatedRewards());
             UpdateButtonStates();
         }
@@ -198,17 +199,20 @@ namespace _Game.CardWheel.UIs
             var items = new List<ZoneItemData>(ZONE_BAR_ITEM_COUNT);
 
             var centerDesired = ZONE_BAR_ITEM_COUNT / 2;
-            var start = Mathf.Max(1, currentZone - centerDesired);
-            var centerIndex = currentZone - start;
+            var start         = Mathf.Max(1, currentZone - centerDesired);
+            var centerIndex   = currentZone - start;
 
             for (int i = 0; i < ZONE_BAR_ITEM_COUNT; i++)
             {
-                var zn = start + i;
-                var cfg = _cardWheelController.GetConfigForZone(zn);
-                var isSuper = zn > 0 && zn % 30 == 0;
-                var isSafe = cfg != null && !cfg.HasBomb;
-                var isPast = zn < currentZone;
-                items.Add(new ZoneItemData(zn, $"Zone {zn}", isSuper, isSafe, isPast));
+                var zn                     = start + i;
+                var cfg                    = _cardWheelController.GetConfigForZone(zn);
+                var isSuper                = zn > 0 && zn % 30 == 0;
+                var isSafe                 = !cfg.HasBomb;
+                var isPast                 = zn < currentZone;
+                var zoneNumberCurrentColor = cfg.ZoneNumberSelectedColor;
+                var zoneNumberPastColor    = cfg.ZoneNumberPastColor;
+                var zoneNumberFutureColor  = cfg.ZoneNumberFutureColor;
+                items.Add(new ZoneItemData(zn, $"Zone {zn}", isSuper, isSafe, isPast, zoneNumberCurrentColor, zoneNumberPastColor, zoneNumberFutureColor));
             }
 
             _screen.SetupZoneBar(items);

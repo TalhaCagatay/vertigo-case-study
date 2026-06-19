@@ -58,6 +58,7 @@ namespace _Game.CardWheel.Controller
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
             ResolveTierConfig();
+            ZoneChanged?.Invoke(CurrentZone);
             RewardsReset?.Invoke();
             RewardsUpdated?.Invoke(new List<AccumulatedReward>(_accumulatedRewards));
         }

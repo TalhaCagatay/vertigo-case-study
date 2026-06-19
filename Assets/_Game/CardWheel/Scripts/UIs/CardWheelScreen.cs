@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
 using _Game.CardWheel.Data;
 using com.core.ui;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
@@ -19,7 +16,6 @@ namespace _Game.CardWheel.UIs
         [SerializeField] private CardWheelIndicator cardWheelIndicator;
         [SerializeField] private Button             spinButton;
         [SerializeField] private Button             leaveButton;
-        [SerializeField] private TMP_Text           zoneText;
         [SerializeField] private Transform          rewardPanelContainer;
         [SerializeField] private RewardEntry        rewardEntryPrefab;
         [SerializeField] private ScrollSnap         scrollSnap;
@@ -70,7 +66,6 @@ namespace _Game.CardWheel.UIs
         }
 
         public void SpinToIndex(int sliceIndex, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
-        public void UpdateZoneDisplay(int zone) => zoneText.text = $"Zone {zone}";
 
         public void RebuildRewardPanel(IReadOnlyList<AccumulatedReward> rewards)
         {
@@ -102,7 +97,7 @@ namespace _Game.CardWheel.UIs
             flyingImage.SetNativeSize();
             flyingImage.transform.localScale *= 0.5f;
 
-            var canvas = GetComponentInParent<Canvas>();
+            var    canvas       = GetComponentInParent<Canvas>();
             Camera canvasCamera = canvas?.worldCamera;
 
             var startScreenPos = RectTransformUtility.WorldToScreenPoint(canvasCamera, sliceWorldPosition);
@@ -128,16 +123,19 @@ namespace _Game.CardWheel.UIs
             var seq = DOTween.Sequence();
             seq.Append(animationIcon.transform.DOMove(iconCenterWorld, flyDuration).SetEase(Ease.InBack));
             seq.Join(animationIcon.transform.DOScale(Vector3.one * 0.5f, flyDuration).SetEase(Ease.InBack));
-            seq.OnComplete(() =>
-            {
-                Destroy(animationIcon);
-                targetEntry.PlayAddAnimation(addedAmount, onComplete);
-            });
+            seq.OnComplete
+                (
+                 () =>
+                 {
+                     Destroy(animationIcon);
+                     targetEntry.PlayAddAnimation(addedAmount, onComplete);
+                 }
+                );
         }
 
-        public void SetSpinButtonInteractable(bool interactable) => spinButton.interactable = interactable;
+        public void SetSpinButtonInteractable(bool  interactable) => spinButton.interactable = interactable;
         public void SetLeaveButtonInteractable(bool interactable) => leaveButton.interactable = interactable;
-        public void ResetWheel() => cardWheelSpinner.ResetRotation();
+        public void ResetWheel()                                  => cardWheelSpinner.ResetRotation();
 
         public void SetupZoneBar(IList<ZoneItemData> items)
         {

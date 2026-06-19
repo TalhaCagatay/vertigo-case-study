@@ -24,7 +24,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2790a920e80b6b24ab1c86630ebfc70f, type: 2}
   - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
   - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
-  bombIndex: -1
+  zoneNumberSelectedColor: {r: 0, g: 0, b: 0, a: 1}
+  zoneNumberPastColor: {r: 0.5597484, g: 0.5597484, b: 0.5597484, a: 1}
+  zoneNumberFutureColor: {r: 0.9058824, g: 0.9058824, b: 0.9058824, a: 1}
   spinDuration: 3
   rewardScaleCurve:
     serializedVersion: 2
