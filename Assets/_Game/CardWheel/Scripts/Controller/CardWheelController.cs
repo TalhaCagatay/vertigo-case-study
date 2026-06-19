@@ -24,8 +24,10 @@ namespace _Game.CardWheel.Controller
         public int             CurrentZone           { get; private set; } = 1;
         public WheelTierConfig CurrentTierConfig     { get; private set; }
         public int             PreSelectedSliceIndex { get; private set; } = -1;
-        public bool            CanLeave              => !IsSpinning && CurrentTierConfig != null && !CurrentTierConfig.HasBomb;
         public bool            IsSpinning            => CurrentState == WheelState.Spinning;
+        public bool            IsSuperZone           => CurrentZone > 0 && CurrentZone % 30 == 0;
+        public bool            IsSafeZone            => !CurrentTierConfig.HasBomb;
+        public bool            CanLeave              => !IsSpinning && (IsSafeZone || IsSuperZone);
 
         public bool IsInitialized { get; private set; }
 
@@ -58,6 +60,8 @@ namespace _Game.CardWheel.Controller
         }
 
         private void ResolveTierConfig() => CurrentTierConfig = _zoneMapping.GetConfigForZone(CurrentZone);
+
+        public WheelTierConfig GetConfigForZone(int zone) => _zoneMapping.GetConfigForZone(zone);
 
         private void SetState(WheelState newState)
         {

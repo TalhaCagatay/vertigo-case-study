@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using _Game.CardWheel.Data;
 using com.core.ui;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
+using _Game.CardWheel.UIs.TopZoneScroll;
 
 namespace _Game.CardWheel.UIs
 {
@@ -14,12 +17,13 @@ namespace _Game.CardWheel.UIs
     {
         [SerializeField] private CardWheelSpinner   cardWheelSpinner;
         [SerializeField] private CardWheelIndicator cardWheelIndicator;
-
-        [SerializeField] private Button      spinButton;
-        [SerializeField] private Button      leaveButton;
-        [SerializeField] private TMP_Text    zoneText;
-        [SerializeField] private Transform   rewardPanelContainer;
-        [SerializeField] private RewardEntry rewardEntryPrefab;
+        [SerializeField] private Button             spinButton;
+        [SerializeField] private Button             leaveButton;
+        [SerializeField] private TMP_Text           zoneText;
+        [SerializeField] private Transform          rewardPanelContainer;
+        [SerializeField] private RewardEntry        rewardEntryPrefab;
+        [SerializeField] private ScrollSnap         scrollSnap;
+        [SerializeField] private ZoneScrollView     zoneScrollView;
 
         [SerializeField] private float flyDuration  = 0.6f;
         [SerializeField] private float spinDuration = 3f;
@@ -34,6 +38,8 @@ namespace _Game.CardWheel.UIs
         {
             cardWheelSpinner   = GetComponentInChildren<CardWheelSpinner>();
             cardWheelIndicator = GetComponentInChildren<CardWheelIndicator>();
+            scrollSnap         = GetComponentInChildren<ScrollSnap>();
+            zoneScrollView     = GetComponentInChildren<ZoneScrollView>();
         }
 #endif
 
@@ -41,6 +47,17 @@ namespace _Game.CardWheel.UIs
         {
             spinButton.onClick.AddListener(OnSpinButtonClicked);
             leaveButton.onClick.AddListener(OnLeaveButtonClicked);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.R)) scrollSnap.NextScreen();
+            if (Input.GetKeyDown(KeyCode.L)) scrollSnap.PreviousScreen();
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                scrollSnap.UpdateListItemPositions();
+                scrollSnap.UpdateListItemsSize();
+            }
         }
 
         private void OnSpinButtonClicked()  => SpinClicked?.Invoke();
@@ -52,12 +69,11 @@ namespace _Game.CardWheel.UIs
             cardWheelIndicator.Setup(config);
         }
 
-        public void SpinToIndex(int       sliceIndex, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
+        public void SpinToIndex(int sliceIndex, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
         public void UpdateZoneDisplay(int zone) => zoneText.text = $"Zone {zone}";
 
         public void RebuildRewardPanel(IReadOnlyList<AccumulatedReward> rewards)
         {
-            Debug.Log($"[TEST] RebuildRewardPanel");
             foreach (var entry in _rewardEntries) Destroy(entry.gameObject);
             _rewardEntries.Clear();
 
@@ -86,22 +102,23 @@ namespace _Game.CardWheel.UIs
             flyingImage.SetNativeSize();
             flyingImage.transform.localScale *= 0.5f;
 
-            var    canvas       = GetComponentInParent<Canvas>();
+            var canvas = GetComponentInParent<Canvas>();
             Camera canvasCamera = canvas?.worldCamera;
 
             var startScreenPos = RectTransformUtility.WorldToScreenPoint(canvasCamera, sliceWorldPosition);
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle
-                    (
-                     (RectTransform)transform,
-                     startScreenPos,
-                     canvasCamera,
-                     out var localStart
-                    ))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, startScreenPos, canvasCamera, out var localStart))
             {
                 animationIcon.transform.localPosition = localStart;
             }
 
-            var           targetEntry    = _rewardEntries.Find(e => e.Label.Contains(rewardType));
+            var targetEntry = _rewardEntries.Find(e => e.Label.Contains(rewardType));
+            if (targetEntry == null)
+            {
+                onComplete?.Invoke();
+                Destroy(animationIcon);
+                return;
+            }
+
             RectTransform targetIconRect = targetEntry.IconRectTransform;
 
             var iconCorners = new Vector3[4];
@@ -111,20 +128,28 @@ namespace _Game.CardWheel.UIs
             var seq = DOTween.Sequence();
             seq.Append(animationIcon.transform.DOMove(iconCenterWorld, flyDuration).SetEase(Ease.InBack));
             seq.Join(animationIcon.transform.DOScale(Vector3.one * 0.5f, flyDuration).SetEase(Ease.InBack));
-            seq.OnComplete
-                (
-                 () =>
-                 {
-                     Destroy(animationIcon);
-                     rewardPanelContainer.GetComponent<VerticalLayoutGroup>();
-                     targetEntry.PlayAddAnimation(addedAmount, onComplete);
-                 }
-                );
+            seq.OnComplete(() =>
+            {
+                Destroy(animationIcon);
+                targetEntry.PlayAddAnimation(addedAmount, onComplete);
+            });
         }
 
-        public void SetSpinButtonInteractable(bool  interactable) => spinButton.interactable = interactable;
+        public void SetSpinButtonInteractable(bool interactable) => spinButton.interactable = interactable;
         public void SetLeaveButtonInteractable(bool interactable) => leaveButton.interactable = interactable;
-        public void ResetWheel()                                  => cardWheelSpinner.ResetRotation();
+        public void ResetWheel() => cardWheelSpinner.ResetRotation();
+
+        public void SetupZoneBar(IList<ZoneItemData> items)
+        {
+            if (zoneScrollView != null) zoneScrollView.UpdateData(items);
+        }
+
+        public void CenterZoneOnIndex(int index, float duration = 0f)
+        {
+            if (zoneScrollView == null) return;
+            zoneScrollView.SetSelectedIndex(index);
+            zoneScrollView.CenterOnIndex(index, duration);
+        }
 
         public Vector3 GetSliceIconWorldPosition(int sliceIndex) => cardWheelSpinner.GetSliceIconWorldPosition(sliceIndex);
 

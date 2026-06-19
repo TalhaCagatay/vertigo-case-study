@@ -4,6 +4,7 @@ using _Game.CardWheel.Controller;
 using _Game.CardWheel.Data;
 using _Game.CardWheel.State;
 using _Game.CardWheel.UIs.Popups;
+using _Game.CardWheel.UIs.TopZoneScroll;
 using com.core;
 using com.core.ui;
 using Cysharp.Threading.Tasks;
@@ -17,6 +18,9 @@ namespace _Game.CardWheel.UIs
         private readonly CardWheelController _cardWheelController;
 
         private CardWheelScreen _screen;
+
+        private const int   ZONE_BAR_ITEM_COUNT    = 60;
+        private const float ZONE_AUTO_SCROLL_SPEED = 0.6f;
 
         public bool IsInitialized { get; private set; }
 
@@ -43,8 +47,11 @@ namespace _Game.CardWheel.UIs
             var zone   = _cardWheelController.CurrentZone;
             _screen.SetupWheel(config, zone);
 
+            PopulateZoneBar(zone);
+
             _screen.UpdateZoneDisplay(_cardWheelController.CurrentZone);
             _screen.RebuildRewardPanel(_cardWheelController.GetAccumulatedRewards());
+            PopulateZoneBar(zone);
             UpdateButtonStates();
 
             IsInitialized = true;
@@ -59,6 +66,8 @@ namespace _Game.CardWheel.UIs
 
             var config = _cardWheelController.CurrentTierConfig;
             _screen.SetupWheel(config, zone);
+
+            PopulateZoneBar(zone);
 
             UpdateButtonStates();
         }
@@ -135,12 +144,7 @@ namespace _Game.CardWheel.UIs
 
                      var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
 
-                     Debug.Log($"[TEST] alreadyExists: {alreadyExists}");
-                     if (!alreadyExists)
-                     {
-                         Debug.Log($"[TEST] Adding new reward type");
-                         _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.Label);
-                     }
+                     if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.Label);
 
                      _screen.PlayRewardAnimation
                          (
@@ -187,6 +191,28 @@ namespace _Game.CardWheel.UIs
             var state = _cardWheelController.CurrentState;
             _screen.SetSpinButtonInteractable(state == WheelState.Idle);
             _screen.SetLeaveButtonInteractable(_cardWheelController.CanLeave);
+        }
+
+        private void PopulateZoneBar(int currentZone)
+        {
+            var items = new List<ZoneItemData>(ZONE_BAR_ITEM_COUNT);
+
+            var centerDesired = ZONE_BAR_ITEM_COUNT / 2;
+            var start = Mathf.Max(1, currentZone - centerDesired);
+            var centerIndex = currentZone - start;
+
+            for (int i = 0; i < ZONE_BAR_ITEM_COUNT; i++)
+            {
+                var zn = start + i;
+                var cfg = _cardWheelController.GetConfigForZone(zn);
+                var isSuper = zn > 0 && zn % 30 == 0;
+                var isSafe = cfg != null && !cfg.HasBomb;
+                var isPast = zn < currentZone;
+                items.Add(new ZoneItemData(zn, $"Zone {zn}", isSuper, isSafe, isPast));
+            }
+
+            _screen.SetupZoneBar(items);
+            _screen.CenterZoneOnIndex(centerIndex, 0.35f);
         }
     }
 }
