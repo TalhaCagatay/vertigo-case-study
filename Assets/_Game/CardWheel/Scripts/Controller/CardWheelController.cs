@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Game.CardWheel.Data;
+using _Game.CardWheel.Data.Rewards;
 using _Game.CardWheel.State;
 using com.core;
 using Cysharp.Threading.Tasks;
@@ -11,14 +12,14 @@ namespace _Game.CardWheel.Controller
 {
     public class CardWheelController : IController
     {
+        public event Action<List<AccumulatedReward>> RewardsUpdated;
+        public event Action<ARewardDefinition>       SpinCompleted;
+        public event Action<ARewardDefinition>       RewardCollected;
+        public event Action<WheelState>              StateChanged;
         public event Action<int>                     ZoneChanged;
         public event Action<int>                     SpinStarted;
-        public event Action<WheelSliceData>          SpinCompleted;
         public event Action                          BombDetonated;
-        public event Action<WheelSliceData>          RewardCollected;
-        public event Action<WheelState>              StateChanged;
         public event Action                          RewardsReset;
-        public event Action<List<AccumulatedReward>> RewardsUpdated;
 
         public WheelState      CurrentState          { get; private set; } = WheelState.Idle;
         public int             CurrentZone           { get; private set; } = 1;
@@ -33,10 +34,12 @@ namespace _Game.CardWheel.Controller
 
         private readonly ZoneWheelMapping        _zoneMapping;
         private readonly List<AccumulatedReward> _accumulatedRewards = new();
+        private readonly PlayerData              _playerData;
 
-        public CardWheelController(ZoneWheelMapping zoneMapping)
+        public CardWheelController(ZoneWheelMapping zoneMapping, PlayerData playerData)
         {
             _zoneMapping = zoneMapping;
+            _playerData  = playerData;
             Initialize();
         }
 
@@ -102,7 +105,7 @@ namespace _Game.CardWheel.Controller
 
             var landedSlice = CurrentTierConfig.Slices[PreSelectedSliceIndex];
 
-            if (landedSlice.IsBomb)
+            if (landedSlice is BombReward)
             {
                 SetState(WheelState.GameOver);
                 BombDetonated?.Invoke();
@@ -118,7 +121,7 @@ namespace _Game.CardWheel.Controller
             SpinCompleted?.Invoke(landedSlice);
         }
 
-        private void AddReward(WheelSliceData slice, int scaledAmount)
+        private void AddReward(ARewardDefinition slice, int scaledAmount)
         {
             var existing = _accumulatedRewards.Find(r => r.RewardType == slice.RewardType);
             if (existing != null)
@@ -127,7 +130,7 @@ namespace _Game.CardWheel.Controller
             }
             else
             {
-                _accumulatedRewards.Add(new AccumulatedReward(slice.RewardType, slice.Icon, slice.Label, scaledAmount));
+                _accumulatedRewards.Add(new AccumulatedReward(slice.RewardType, slice.Icon, slice.id, slice.Label, scaledAmount));
             }
 
             RewardCollected?.Invoke(slice);
@@ -151,9 +154,28 @@ namespace _Game.CardWheel.Controller
                 return new List<AccumulatedReward>(_accumulatedRewards);
             }
 
+            foreach (var reward in _accumulatedRewards)
+            {
+                var slice = FindSliceByRewardType(reward.RewardType);
+                if (slice != null)
+                {
+                    slice.Grant(_playerData, reward.Amount);
+                }
+            }
+
             var rewards = new List<AccumulatedReward>(_accumulatedRewards);
             ResetState();
             return rewards;
+        }
+
+        private ARewardDefinition FindSliceByRewardType(string rewardType)
+        {
+            foreach (var slice in CurrentTierConfig.Slices)
+            {
+                if (slice.RewardType == rewardType)
+                    return slice;
+            }
+            return null;
         }
 
         public void Revive()
@@ -164,11 +186,8 @@ namespace _Game.CardWheel.Controller
                 return;
             }
 
-            // _accumulatedRewards.Clear();
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
-            // RewardsReset?.Invoke();
-            // RewardsUpdated?.Invoke(new List<AccumulatedReward>(_accumulatedRewards));
             Debug.Log("[CardWheelController] Player revived, continuing from same zone");
         }
 

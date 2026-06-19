@@ -144,7 +144,7 @@ namespace _Game.CardWheel.UIs
 
                      var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
 
-                     if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.Label);
+                     if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
 
                      _screen.PlayRewardAnimation
                          (

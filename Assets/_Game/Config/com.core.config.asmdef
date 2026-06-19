@@ -1,0 +1,17 @@
+{
+    "name": "com.core.config",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1f5796ad930a3fe4894fef1736997a37",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

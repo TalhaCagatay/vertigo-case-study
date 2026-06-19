@@ -1,4 +1,4 @@
-using _Game.CardWheel.Data;
+using _Game.CardWheel.Data.Rewards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +10,7 @@ namespace _Game.CardWheel.UIs
         [SerializeField] private Image    iconImage;
         [SerializeField] private TMP_Text amountText;
 
-        public void Setup(WheelSliceData sliceData, int scaledAmount)
+        public void Setup(ARewardDefinition sliceData, int scaledAmount)
         {
             iconImage.sprite  = sliceData.Icon;
             iconImage.enabled = true;

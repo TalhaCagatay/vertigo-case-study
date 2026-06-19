@@ -16,14 +16,14 @@ MonoBehaviour:
   spinnerSprite: {fileID: 21300000, guid: 7a91143117b6eac4b92a63c04ed7ce81, type: 3}
   indicatorSprite: {fileID: 21300000, guid: 716b766872f82f441809c7b4eb7f385f, type: 3}
   slices:
-  - {fileID: 11400000, guid: ad337b1fe60e34d49b080352f4746bde, type: 2}
-  - {fileID: 11400000, guid: 37ffff8ff7cdf9749b3419a2edeebae1, type: 2}
-  - {fileID: 11400000, guid: ad337b1fe60e34d49b080352f4746bde, type: 2}
-  - {fileID: 11400000, guid: 5d3e91118d683a7438df9ccf326494c1, type: 2}
-  - {fileID: 11400000, guid: 21b280ff8a1f11f4dafdc9b4cb5d7c70, type: 2}
-  - {fileID: 11400000, guid: ad337b1fe60e34d49b080352f4746bde, type: 2}
-  - {fileID: 11400000, guid: 37ffff8ff7cdf9749b3419a2edeebae1, type: 2}
-  - {fileID: 11400000, guid: ad337b1fe60e34d49b080352f4746bde, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
+  - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
+  - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
+  - {fileID: 11400000, guid: 2790a920e80b6b24ab1c86630ebfc70f, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
+  - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
   bombIndex: -1
   spinDuration: 3
   rewardScaleCurve:

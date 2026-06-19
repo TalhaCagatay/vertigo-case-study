@@ -15,6 +15,7 @@ namespace _Game.CardWheel.UIs
         private int _currentAmount;
 
         public string Label { get; private set; }
+        public string Id    { get; private set; }
 
         public RectTransform IconRectTransform => (RectTransform)iconImage.transform;
 
@@ -27,11 +28,12 @@ namespace _Game.CardWheel.UIs
         }
 #endif
 
-        public void Setup(Sprite icon, int amount, string label)
+        public void Setup(Sprite icon, int amount, string id, string label)
         {
             iconImage.sprite = icon;
             _currentAmount   = amount;
             amountText.text  = $"x{amount}";
+            Id               = id;
             Label            = label;
         }
 
@@ -57,7 +59,7 @@ namespace _Game.CardWheel.UIs
                      ).SetEase(Ease.OutCubic)
                 );
 
-            horizontalLayoutGroup.enabled = false;
+            horizontalLayoutGroup.enabled = false; // a small hack to disable layout to play the animation properly and enable it later
             iconImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             seq.Join(iconImage.rectTransform.DOScale(1.3f, 0.2f).SetEase(Ease.OutBack));
             seq.Append(iconImage.rectTransform.DOScale(1f, 0.3f).SetEase(Ease.InBack));

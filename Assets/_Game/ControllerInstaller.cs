@@ -1,6 +1,7 @@
 ﻿using _Game.CardWheel.Controller;
 using _Game.CardWheel.Data;
 using _Game.CardWheel.UIs;
+using _Game.Config;
 using com.core.ui;
 using Reflex.Core;
 using Reflex.Enums;
@@ -21,6 +22,8 @@ namespace _Game
             builder.RegisterType(typeof(CardWheelController),   Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(CardWheelUIController), Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(UIController),          Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(GameConfigController),  Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(PlayerData),            Lifetime.Singleton, Resolution.Eager);
         }
     }
 }

@@ -80,19 +80,19 @@ namespace _Game.CardWheel.UIs
             foreach (var reward in rewards)
             {
                 var entry = Instantiate(rewardEntryPrefab, rewardPanelContainer);
-                entry.Setup(reward.Icon, reward.Amount, reward.Label);
+                entry.Setup(reward.Icon, reward.Amount, reward.Id, reward.Label);
                 _rewardEntries.Add(entry);
             }
         }
 
-        public void AddRewardEntry(Sprite icon, int amount, string label)
+        public void AddRewardEntry(Sprite icon, int amount, string id, string label)
         {
             var entry = Instantiate(rewardEntryPrefab, rewardPanelContainer);
-            entry.Setup(icon, amount, label);
+            entry.Setup(icon, amount, id, label);
             _rewardEntries.Add(entry);
         }
 
-        public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardType, int addedAmount, Action onComplete)
+        public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete)
         {
             var animationIcon = new GameObject("AnimationRewardIcon", typeof(Image));
             animationIcon.transform.SetParent(transform, false);
@@ -111,7 +111,7 @@ namespace _Game.CardWheel.UIs
                 animationIcon.transform.localPosition = localStart;
             }
 
-            var targetEntry = _rewardEntries.Find(e => e.Label.Contains(rewardType));
+            var targetEntry = _rewardEntries.Find(e => e.Id == rewardId);
             if (targetEntry == null)
             {
                 onComplete?.Invoke();
