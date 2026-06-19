@@ -45,7 +45,7 @@ namespace _Game.CardWheel.UIs
 
             const int FULL_SPINS = 5;
 
-            var sliceAngle  = (targetSliceIndex * ANGLE_PER_SLICE);
+            var sliceAngle  = targetSliceIndex * ANGLE_PER_SLICE;
             var totalSpins  = FULL_SPINS * 360f;
             var overshoot   = UnityEngine.Random.Range(5f, 40f);
             var targetAngle = sliceAngle - totalSpins - overshoot;

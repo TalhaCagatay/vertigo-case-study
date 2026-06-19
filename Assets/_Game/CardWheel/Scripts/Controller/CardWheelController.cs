@@ -98,12 +98,6 @@ namespace _Game.CardWheel.Controller
 
         public void CompleteSpin()
         {
-            if (CurrentState != WheelState.Spinning)
-            {
-                Debug.LogWarning("[CardWheelController] CompleteSpin called but not in Spinning state");
-                return;
-            }
-
             var landedSlice = CurrentTierConfig.Slices[PreSelectedSliceIndex];
 
             if (landedSlice is BombReward)

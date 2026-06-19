@@ -27,7 +27,7 @@ MonoBehaviour:
   zoneNumberSelectedColor: {r: 1, g: 0.79502773, b: 0.19182372, a: 1}
   zoneNumberPastColor: {r: 0.6792453, g: 0.55627096, b: 0.1943751, a: 1}
   zoneNumberFutureColor: {r: 1, g: 0.7960785, b: 0.19215688, a: 1}
-  spinDuration: 3
+  spinDuration: 5
   rewardScaleCurve:
     serializedVersion: 2
     m_Curve:
@@ -35,17 +35,17 @@ MonoBehaviour:
       time: 0
       value: 1
       inSlope: 0
-      outSlope: 0.09
-      tangentMode: 0
+      outSlope: 0
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 100
-      value: 10
-      inSlope: 0.09
+      time: 1
+      value: 1
+      inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0

@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace _Game.CardWheel.Data
 {
-    /// <summary>
-    /// Represents a stack of a single reward type collected during the wheel session.
-    /// </summary>
     [Serializable]
     public class AccumulatedReward
     {
@@ -24,9 +21,6 @@ namespace _Game.CardWheel.Data
             Amount     = amount;
         }
 
-        public void Add(int amount)
-        {
-            Amount += amount;
-        }
+        public void Add(int amount) => Amount += amount;
     }
 }

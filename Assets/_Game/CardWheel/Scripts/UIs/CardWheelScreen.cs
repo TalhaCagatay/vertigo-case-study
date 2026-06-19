@@ -27,7 +27,7 @@ namespace _Game.CardWheel.UIs
         public event Action SpinClicked;
         public event Action LeaveClicked;
 
-        private readonly List<RewardEntry> _rewardEntries = new();
+        private readonly Dictionary<string, RewardEntry> _rewardEntries = new();
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -45,15 +45,10 @@ namespace _Game.CardWheel.UIs
             leaveButton.onClick.AddListener(OnLeaveButtonClicked);
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-            if (Input.GetKeyDown(KeyCode.R)) scrollSnap.NextScreen();
-            if (Input.GetKeyDown(KeyCode.L)) scrollSnap.PreviousScreen();
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                scrollSnap.UpdateListItemPositions();
-                scrollSnap.UpdateListItemsSize();
-            }
+            spinButton.onClick.RemoveListener(OnSpinButtonClicked);
+            leaveButton.onClick.RemoveListener(OnLeaveButtonClicked);
         }
 
         private void OnSpinButtonClicked()  => SpinClicked?.Invoke();
@@ -67,29 +62,27 @@ namespace _Game.CardWheel.UIs
 
         public void SpinToIndex(int sliceIndex, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
 
-        public void RebuildRewardPanel(IReadOnlyList<AccumulatedReward> rewards)
+        public void ClearRewardPanel()
         {
-            foreach (var entry in _rewardEntries) Destroy(entry.gameObject);
+            foreach (var entry in _rewardEntries.Values) Destroy(entry.gameObject);
             _rewardEntries.Clear();
-
-            foreach (var reward in rewards)
-            {
-                var entry = Instantiate(rewardEntryPrefab, rewardPanelContainer);
-                entry.Setup(reward.Icon, reward.Amount, reward.Id, reward.Label);
-                _rewardEntries.Add(entry);
-            }
         }
 
         public void AddRewardEntry(Sprite icon, int amount, string id, string label)
         {
+            if (_rewardEntries.ContainsKey(id))
+                return;
+
             var entry = Instantiate(rewardEntryPrefab, rewardPanelContainer);
             entry.Setup(icon, amount, id, label);
-            _rewardEntries.Add(entry);
+            _rewardEntries.Add(id, entry);
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rewardPanelContainer as RectTransform); // Layout takes a frame to update but our flying icon animation needs to get updated position asap
         }
 
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete)
         {
-            var animationIcon = new GameObject("AnimationRewardIcon", typeof(Image));
+            var animationIcon = new GameObject("AnimationRewardIcon", typeof(Image)); // no need for a object pooling system for this basic demo
             animationIcon.transform.SetParent(transform, false);
 
             var flyingImage = animationIcon.GetComponent<Image>();
@@ -98,7 +91,7 @@ namespace _Game.CardWheel.UIs
             flyingImage.transform.localScale *= 0.5f;
 
             var    canvas       = GetComponentInParent<Canvas>();
-            Camera canvasCamera = canvas?.worldCamera;
+            Camera canvasCamera = canvas.worldCamera;
 
             var startScreenPos = RectTransformUtility.WorldToScreenPoint(canvasCamera, sliceWorldPosition);
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, startScreenPos, canvasCamera, out var localStart))
@@ -106,11 +99,9 @@ namespace _Game.CardWheel.UIs
                 animationIcon.transform.localPosition = localStart;
             }
 
-            var targetEntry = _rewardEntries.Find(e => e.Id == rewardId);
-            if (targetEntry == null)
+            if (!_rewardEntries.TryGetValue(rewardId, out var targetEntry))
             {
-                onComplete?.Invoke();
-                Destroy(animationIcon);
+                Debug.LogError($"{rewardId} not found");
                 return;
             }
 
@@ -133,28 +124,17 @@ namespace _Game.CardWheel.UIs
                 );
         }
 
-        public void SetSpinButtonInteractable(bool  interactable) => spinButton.interactable = interactable;
-        public void SetLeaveButtonInteractable(bool interactable) => leaveButton.interactable = interactable;
-        public void ResetWheel()                                  => cardWheelSpinner.ResetRotation();
-
-        public void SetupZoneBar(IList<ZoneItemData> items)
-        {
-            if (zoneScrollView != null) zoneScrollView.UpdateData(items);
-        }
+        public void    SetSpinButtonInteractable(bool  interactable) => spinButton.interactable = interactable;
+        public void    SetLeaveButtonInteractable(bool interactable) => leaveButton.interactable = interactable;
+        public void    ResetWheel()                                  => cardWheelSpinner.ResetRotation();
+        public void    SetupZoneBar(IList<ZoneItemData> items)       => zoneScrollView.UpdateData(items);
+        public Vector3 GetSliceIconWorldPosition(int    sliceIndex)  => cardWheelSpinner.GetSliceIconWorldPosition(sliceIndex);
 
         public void CenterZoneOnIndex(int index, float duration = 0f)
         {
             if (zoneScrollView == null) return;
             zoneScrollView.SetSelectedIndex(index);
             zoneScrollView.CenterOnIndex(index, duration);
-        }
-
-        public Vector3 GetSliceIconWorldPosition(int sliceIndex) => cardWheelSpinner.GetSliceIconWorldPosition(sliceIndex);
-
-        private void OnDestroy()
-        {
-            spinButton.onClick.RemoveListener(OnSpinButtonClicked);
-            leaveButton.onClick.RemoveListener(OnLeaveButtonClicked);
         }
     }
 }

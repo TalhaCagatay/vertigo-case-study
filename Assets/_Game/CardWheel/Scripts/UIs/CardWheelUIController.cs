@@ -19,8 +19,7 @@ namespace _Game.CardWheel.UIs
 
         private CardWheelScreen _screen;
 
-        private const int   ZONE_BAR_ITEM_COUNT    = 60;
-        private const float ZONE_AUTO_SCROLL_SPEED = 0.6f;
+        private const int ZONE_BAR_ITEM_COUNT = 60;
 
         public bool IsInitialized { get; private set; }
 
@@ -49,7 +48,6 @@ namespace _Game.CardWheel.UIs
 
             PopulateZoneBar(zone);
 
-            _screen.RebuildRewardPanel(_cardWheelController.GetAccumulatedRewards());
             PopulateZoneBar(zone);
             UpdateButtonStates();
 
@@ -75,11 +73,7 @@ namespace _Game.CardWheel.UIs
 
         private void RewardsUpdated(List<AccumulatedReward> rewards)
         {
-            if (_cardWheelController.CurrentState == WheelState.Idle ||
-                _cardWheelController.CurrentState == WheelState.GameOver)
-            {
-                _screen.RebuildRewardPanel(rewards);
-            }
+            if (rewards.Count == 0) _screen.ClearRewardPanel();
         }
 
         private async void BombDetonated()
@@ -88,9 +82,9 @@ namespace _Game.CardWheel.UIs
             bombPopup.Setup(OnGiveUpClicked, OnReviveClicked);
         }
 
-        private async void OnGiveUpClicked()
+        private void OnGiveUpClicked()
         {
-            await _uiController.PopPopupAsync();
+            _uiController.PopPopup();
             _cardWheelController.GiveUp();
             RefreshAfterReset();
         }
@@ -99,7 +93,6 @@ namespace _Game.CardWheel.UIs
         {
             _uiController.PopPopup();
             _cardWheelController.Revive();
-            RefreshAfterReset();
         }
 
         private void RefreshAfterReset()
@@ -110,15 +103,12 @@ namespace _Game.CardWheel.UIs
 
             _screen.ResetWheel();
             PopulateZoneBar(zone);
-            _screen.RebuildRewardPanel(_cardWheelController.GetAccumulatedRewards());
+            _screen.ClearRewardPanel();
             UpdateButtonStates();
         }
 
         private void SpinRequested()
         {
-            if (_cardWheelController.CurrentState != WheelState.Idle)
-                return;
-
             _cardWheelController.PrepareSpin();
 
             _screen.SetSpinButtonInteractable(false);
@@ -126,39 +116,38 @@ namespace _Game.CardWheel.UIs
             _cardWheelController.OnSpinStarted();
 
             var preSelectedIndex = _cardWheelController.PreSelectedSliceIndex;
+
+            _screen.SpinToIndex(preSelectedIndex, OnSpinCompleted);
+        }
+
+        private void OnSpinCompleted()
+        {
+            var preSelectedIndex = _cardWheelController.PreSelectedSliceIndex;
             var config           = _cardWheelController.CurrentTierConfig;
             var landedSlice      = config.Slices[preSelectedIndex];
             var existingRewards  = _cardWheelController.GetAccumulatedRewards();
+            var alreadyExists    = existingRewards.Any(r => r.RewardType == landedSlice.RewardType);
+            _cardWheelController.CompleteSpin();
 
-            _screen.SpinToIndex
+            if (_cardWheelController.CurrentState == WheelState.GameOver) return;
+
+            var multiplier   = config.GetRewardMultiplier(_cardWheelController.CurrentZone);
+            var scaledAmount = Mathf.RoundToInt(landedSlice.Amount * multiplier);
+
+            var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
+
+            if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
+
+            _screen.PlayRewardAnimation
                 (
-                 preSelectedIndex,
+                 sliceWorldPos,
+                 landedSlice.Icon,
+                 landedSlice.RewardType,
+                 scaledAmount,
                  () =>
                  {
-                     var alreadyExists = existingRewards.Any(r => r.RewardType == landedSlice.RewardType);
-                     _cardWheelController.CompleteSpin();
-
-                     if (_cardWheelController.CurrentState == WheelState.GameOver) return;
-
-                     var multiplier   = config.GetRewardMultiplier(_cardWheelController.CurrentZone);
-                     var scaledAmount = Mathf.RoundToInt(landedSlice.Amount * multiplier);
-
-                     var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
-
-                     if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
-
-                     _screen.PlayRewardAnimation
-                         (
-                          sliceWorldPos,
-                          landedSlice.Icon,
-                          landedSlice.RewardType,
-                          scaledAmount,
-                          () =>
-                          {
-                              _cardWheelController.AdvanceZone();
-                              _screen.SetSpinButtonInteractable(true);
-                          }
-                         );
+                     _cardWheelController.AdvanceZone();
+                     _screen.SetSpinButtonInteractable(true);
                  }
                 );
         }
