@@ -1,5 +1,6 @@
 {
   "dependencies"    : {
+	"com.cysharp.memorypack"                      : "1.10.0",
 	"com.cysharp.unitask"                         : "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.5.11",
 	"com.gustavopsantos.reflex"                   : "https://github.com/gustavopsantos/reflex.git?path=/Assets/Reflex/#14.3.0",
 	"com.unity.collab-proxy"                      : "2.5.2",
