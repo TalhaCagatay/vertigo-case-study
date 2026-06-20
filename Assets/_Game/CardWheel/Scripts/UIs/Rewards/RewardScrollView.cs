@@ -1,23 +1,32 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Lean.Pool;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
+using Random = UnityEngine.Random;
 
 namespace Vertigo.CardWheel.UIs.Rewards
 {
     public class RewardScrollView : FancyScrollRect<RewardItemData, RewardContext>
     {
         [SerializeField] private GameObject cellPrefab;
-        [SerializeField]         float      cellSize    = 100f;
+        [SerializeField] private float      cellSize    = 100f;
         [SerializeField] private float      flyDuration = 0.6f;
+        [SerializeField] private GameObject flyingIconPrefab;
 
         private readonly Dictionary<string, RewardEntry>    _entryLookup = new();
         private readonly Dictionary<string, RewardItemData> _rewardItems = new();
 
         protected override GameObject CellPrefab => cellPrefab;
         protected override float      CellSize   => cellSize;
+
+        // private void Awake()
+        // {
+        //     if (flyingIconPrefab != null)
+        //         LeanPool.Pre(flyingIconPrefab, 6);
+        // }
 
         private void UpdateData(IList<RewardItemData> items)
         {
@@ -64,25 +73,18 @@ namespace Vertigo.CardWheel.UIs.Rewards
 
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete)
         {
-            var animationIcon = new GameObject("AnimationRewardIcon", typeof(Image)); // no need for an object pooling for this basic demo
-            animationIcon.transform.SetParent(transform, false);
-
-            var flyingImage = animationIcon.GetComponent<Image>();
-            flyingImage.sprite         = sliceIcon;
-            flyingImage.preserveAspect = true;
-            // flyingImage.SetNativeSize();
-            // flyingImage.transform.localScale *= 0.5f;
-
             var canvas       = GetComponentInParent<Canvas>();
             var canvasCamera = canvas.worldCamera;
 
             var startScreenPos = RectTransformUtility.WorldToScreenPoint(canvasCamera, sliceWorldPosition);
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, startScreenPos, canvasCamera, out var localStart))
-                animationIcon.transform.localPosition = localStart;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, startScreenPos, canvasCamera, out var localStart))
+            {
+                onComplete?.Invoke();
+                return;
+            }
 
             if (!_rewardItems.TryGetValue(rewardId, out var rewardItem))
             {
-                Destroy(animationIcon);
                 onComplete?.Invoke();
                 return;
             }
@@ -91,7 +93,6 @@ namespace Vertigo.CardWheel.UIs.Rewards
 
             if (!_entryLookup.TryGetValue(rewardId, out var targetEntry))
             {
-                Destroy(animationIcon);
                 onComplete?.Invoke();
                 return;
             }
@@ -100,18 +101,48 @@ namespace Vertigo.CardWheel.UIs.Rewards
             var iconCorners    = new Vector3[4];
             targetIconRect.GetWorldCorners(iconCorners);
             var iconCenterWorld = (iconCorners[0] + iconCorners[2]) * 0.5f;
+            var targetScale     = targetIconRect.localScale;
 
-            var seq = DOTween.Sequence();
-            seq.Append(animationIcon.transform.DOMove(iconCenterWorld, flyDuration).SetEase(Ease.InBack));
-            seq.Join(animationIcon.transform.DOScale(Vector3.one * 0.5f, flyDuration).SetEase(Ease.InBack));
-            seq.OnComplete
-                (
-                 () =>
-                 {
-                     Destroy(animationIcon);
-                     targetEntry.PlayAddAnimation(addedAmount, onComplete);
-                 }
-                );
+            const int   iconCount      = 6;
+            const float spreadRadius   = 40f;
+            var         completedCount = 0;
+
+            for (var i = 0; i < iconCount; i++)
+            {
+                var animationIcon = LeanPool.Spawn(flyingIconPrefab, transform);
+                animationIcon.name = $"AnimationRewardIcon_{i}";
+
+                var flyingImage = animationIcon.GetComponent<Image>();
+                flyingImage.sprite         = sliceIcon;
+                flyingImage.preserveAspect = true;
+
+                var angleJitter  = Random.Range(-0.4f, 0.4f);
+                var angle        = i / (float)iconCount * Mathf.PI * 2f + angleJitter;
+                var radiusJitter = Random.Range(0.5f, 1.5f);
+                var spreadOffset = new Vector2(Mathf.Cos(angle) * spreadRadius * radiusJitter, Mathf.Sin(angle) * spreadRadius * radiusJitter);
+                animationIcon.transform.localPosition = localStart + spreadOffset;
+                animationIcon.transform.localScale    = Vector3.zero;
+
+                var randomScale = targetScale * Random.Range(0.6f, 1.3f);
+
+                var seq = DOTween.Sequence();
+                seq.Append(animationIcon.transform.DOScale(randomScale, flyDuration    * 0.3f).SetEase(Ease.OutBack));
+                seq.Append(animationIcon.transform.DOMove(iconCenterWorld, flyDuration * 0.4f).SetEase(Ease.InBack));
+                seq.Join(animationIcon.transform.DOScale(targetScale, flyDuration      * 0.4f).SetEase(Ease.InBack));
+                seq.OnComplete
+                    (
+                     () =>
+                     {
+                         flyingImage.sprite                 = null;
+                         animationIcon.transform.localScale = Vector3.zero;
+                         LeanPool.Despawn(animationIcon);
+
+                         completedCount++;
+                         if (completedCount >= iconCount)
+                             targetEntry.PlayAddAnimation(addedAmount, onComplete);
+                     }
+                    );
+            }
         }
     }
 }

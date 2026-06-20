@@ -7,7 +7,7 @@ using com.core.ui;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Vertigo.CardWheel.UIs.Wheel
+namespace Vertigo.CardWheel.UIs.Screens
 {
     public class CardWheelScreen : BaseScreen
     {

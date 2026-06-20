@@ -1042,6 +1042,7 @@ MonoBehaviour:
   cellPrefab: {fileID: 5046742430775572246, guid: e6749d736cb03564b8a0e9d01097a679, type: 3}
   cellSize: 100
   flyDuration: 0.6
+  flyingIconPrefab: {fileID: 8340032824990579650, guid: 0ced9ca9632f0cc48a00bf032d93bf86, type: 3}
 --- !u!1 &3853022667513006774
 GameObject:
   m_ObjectHideFlags: 0

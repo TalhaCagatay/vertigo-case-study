@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Vertigo.CardWheel.UIs.Wheel
+namespace Vertigo.CardWheel.UIs.Screens
 {
     public class CardWheelSpinner : MonoBehaviour
     {

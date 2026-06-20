@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605ca627684b3ce43a13e13262d9aa6f, type: 3}
   m_Name: WheelTierConfig_Silver
   m_EditorClassIdentifier: 
-  tierType: 1
   spinnerSprite: {fileID: 21300000, guid: 51f612657c5815149bb9bfc9c7e6ac59, type: 3}
   indicatorSprite: {fileID: 21300000, guid: 7a55c22fef2eb334188d0936a61c96c1, type: 3}
   slices:
@@ -24,7 +23,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7ff8818b9a0de2b449ad990dce263fb2, type: 2}
   - {fileID: 11400000, guid: a1dfda3713a8dea4fa006c8e20baf2f2, type: 2}
   - {fileID: 11400000, guid: 7ff8818b9a0de2b449ad990dce263fb2, type: 2}
-  zoneNumberSelectedColor: {r: 0.26592308, g: 0.7987421, b: 0.21852368, a: 1}
+  zoneNumberSelectedColor: {r: 0.26592308, g: 0.93333334, b: 0.20784314, a: 1}
   zoneNumberPastColor: {r: 0.20313084, g: 0.5283019, b: 0.17443925, a: 1}
   zoneNumberFutureColor: {r: 0.26666668, g: 0.8000001, b: 0.21960786, a: 1}
   spinDuration: 4
