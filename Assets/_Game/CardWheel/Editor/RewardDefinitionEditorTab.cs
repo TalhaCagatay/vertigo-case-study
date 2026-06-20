@@ -15,13 +15,15 @@ namespace Vertigo.CardWheel.Editor
             var baseType = typeof(ARewardDefinition);
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a =>
-                      {
-                          try { return a.GetTypes(); }
-                          catch (ReflectionTypeLoadException) { return Type.EmptyTypes; }
-                      }
-                     ).Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t)).OrderBy(t => t.Name).Select(t => (t, ObjectNames.NicifyVariableName(t.Name))).ToArray();
-             }
-            );
+                {
+                    try { return a.GetTypes(); }
+                    catch (ReflectionTypeLoadException) { return Type.EmptyTypes; }
+                })
+                .Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t))
+                .OrderBy(t => t.Name)
+                .Select(t => (t, ObjectNames.NicifyVariableName(t.Name)))
+                .ToArray();
+        });
 
         private int                     _selectedRewardTypeIndex = 0;
         private int                     _typeFilterIndex         = 0;
@@ -103,7 +105,7 @@ namespace Vertigo.CardWheel.Editor
 
             EditorGUILayout.Space(4);
 
-            _selectionScrollPos = EditorGUILayout.BeginScrollView(_selectionScrollPos);
+            _selectionScrollPos = EditorGUILayout.BeginScrollView(_selectionScrollPos, GUILayout.Width(300));
             var newIndex = GUILayout.SelectionGrid(_selectedIndex, _assetNames, 1);
             if (newIndex != _selectedIndex)
             {
