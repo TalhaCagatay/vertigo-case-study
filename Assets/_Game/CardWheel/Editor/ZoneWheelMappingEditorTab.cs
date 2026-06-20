@@ -13,16 +13,7 @@ namespace Vertigo.CardWheel.Editor
 
         protected override void DrawAssetFields()
         {
-            var so = _buffer.SerializedWorking;
-            so.Update();
-
-            var bronzeProp = so.FindProperty("bronzeConfig");
-            var silverProp = so.FindProperty("silverConfig");
-            var goldProp   = so.FindProperty("goldConfig");
-
-            EditorGUILayout.PropertyField(bronzeProp, new GUIContent("Bronze Tier Config"));
-            EditorGUILayout.PropertyField(silverProp, new GUIContent("Silver Tier Config"));
-            EditorGUILayout.PropertyField(goldProp,   new GUIContent("Gold Tier Config"));
+            base.DrawAssetFields();
 
             EditorGUILayout.Space(12);
             EditorGUILayout.LabelField("Zone Mapping Preview", EditorStyles.boldLabel);
@@ -33,8 +24,6 @@ namespace Vertigo.CardWheel.Editor
                  "• All other zones → Bronze",
                  EditorStyles.wordWrappedLabel
                 );
-
-            so.ApplyModifiedProperties();
         }
     }
 }

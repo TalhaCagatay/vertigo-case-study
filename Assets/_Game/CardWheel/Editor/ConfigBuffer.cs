@@ -59,7 +59,7 @@ namespace Vertigo.CardWheel.Editor
             }
             else
             {
-                Original = ScriptableObject.CreateInstance<T>();
+                Original = (T)ScriptableObject.CreateInstance(Working.GetType());
                 EditorUtility.CopySerialized(Working, Original);
                 Original.name = Working.name;
                 AssetDatabase.CreateAsset(Original, AssetPath);

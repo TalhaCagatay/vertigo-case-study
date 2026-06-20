@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Vertigo.CardWheel.Data.Rewards;
 
 namespace Vertigo.CardWheel.Editor
 {
@@ -122,7 +123,6 @@ namespace Vertigo.CardWheel.Editor
 
         protected virtual void SelectAsset(int index)
         {
-            // Reset name edit state on selection change
             _editingName = null;
             _nameChanged = false;
 
@@ -167,10 +167,9 @@ namespace Vertigo.CardWheel.Editor
         {
             if (_selectedIndex < 0 || _selectedIndex >= _assetList.Count) return;
 
-            var source = _assetList[_selectedIndex];
+            var source     = _assetList[_selectedIndex];
             var sourcePath = AssetDatabase.GetAssetPath(source);
 
-            // Generate a unique copy name in the same folder (no file dialog).
             var directory = System.IO.Path.GetDirectoryName(sourcePath);
             var baseName  = System.IO.Path.GetFileNameWithoutExtension(sourcePath);
             var extension = System.IO.Path.GetExtension(sourcePath);
@@ -192,7 +191,6 @@ namespace Vertigo.CardWheel.Editor
             AssetDatabase.Refresh();
             RefreshAssetList();
 
-            // Select the newly created duplicate
             var newAsset = AssetDatabase.LoadAssetAtPath<T>(destPath);
             var newIndex = _assetList.IndexOf(newAsset);
             if (newIndex >= 0)
@@ -226,9 +224,8 @@ namespace Vertigo.CardWheel.Editor
             RefreshAssetList();
         }
 
-        // Name edit tracking for rename-on-apply
         private string _editingName;
-        private bool _nameChanged;
+        private bool   _nameChanged;
 
         protected virtual void DrawEditorPanel()
         {
@@ -252,7 +249,7 @@ namespace Vertigo.CardWheel.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 _buffer.Working.name = _editingName;
-                _nameChanged = true;
+                _nameChanged         = true;
                 _buffer.MarkDirty();
             }
 
@@ -276,7 +273,32 @@ namespace Vertigo.CardWheel.Editor
             DrawApplyRevertButtons();
         }
 
-        protected abstract void DrawAssetFields();
+        protected virtual void DrawAssetFields()
+        {
+            var so = _buffer.SerializedWorking;
+            so.Update();
+
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.ObjectField("Asset", _buffer.Original, typeof(ARewardDefinition), false);
+            EditorGUI.EndDisabledGroup();
+
+            var prop = so.GetIterator();
+            if (prop.NextVisible(true))
+            {
+                do
+                {
+                    var isScriptField = prop.name == "m_Script";
+                    if (isScriptField) EditorGUI.BeginDisabledGroup(true);
+
+                    EditorGUILayout.PropertyField(prop, true);
+
+                    if (isScriptField) EditorGUI.EndDisabledGroup();
+                }
+                while (prop.NextVisible(false));
+            }
+
+            so.ApplyModifiedProperties();
+        }
 
         protected virtual void DrawApplyRevertButtons()
         {
@@ -309,23 +331,21 @@ namespace Vertigo.CardWheel.Editor
         {
             if (_buffer == null) return;
 
-            // Handle rename: if the name changed, we need to rename the asset after Apply
             var needsRename = _nameChanged && _buffer.Original != null;
-            var newName = _editingName;
+            var newName     = _editingName;
 
             _buffer.Apply();
 
             if (needsRename && _buffer.Original != null)
             {
                 var currentPath = AssetDatabase.GetAssetPath(_buffer.Original);
-                var result = AssetDatabase.RenameAsset(currentPath, newName);
+                var result      = AssetDatabase.RenameAsset(currentPath, newName);
                 if (!string.IsNullOrEmpty(result))
                 {
                     Debug.LogError($"Failed to rename '{currentPath}' to '{newName}': {result}");
                 }
                 else
                 {
-                    // Update the working clone to reflect the new name
                     _buffer.Working.name = newName;
                 }
             }
@@ -339,15 +359,13 @@ namespace Vertigo.CardWheel.Editor
                 var path  = AssetDatabase.GetAssetPath(_buffer.Original);
                 var asset = AssetDatabase.LoadAssetAtPath<T>(path);
                 _selectedIndex = _assetList.IndexOf(asset);
-                // Sync editing name to the new asset name
-                _editingName = asset != null ? asset.name : _editingName;
+                _editingName   = asset != null ? asset.name : _editingName;
             }
         }
 
         public virtual void Revert()
         {
             _buffer?.Revert();
-            // Reset name edit state
             if (_buffer?.Working != null)
             {
                 _editingName = _buffer.Working.name;

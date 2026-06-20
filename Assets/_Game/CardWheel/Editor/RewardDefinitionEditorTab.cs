@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using Vertigo.CardWheel.Data.Rewards;
@@ -9,14 +10,18 @@ namespace Vertigo.CardWheel.Editor
 {
     public class RewardDefinitionEditorTab : EditorTabBase<ARewardDefinition>
     {
-        private static readonly (Type Type, string Label)[] _rewardTypes =
+        private static readonly Lazy<(Type Type, string Label)[]> _rewardTypes = new(() =>
         {
-            (typeof(CoinReward), "Coin Reward"),
-            (typeof(BombReward), "Bomb Reward"),
-            (typeof(ChestReward), "Chest Reward"),
-            (typeof(CosmeticReward), "Cosmetic Reward"),
-            (typeof(SkillPointReward), "Skill Point Reward"),
-        };
+            var baseType = typeof(ARewardDefinition);
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a =>
+                      {
+                          try { return a.GetTypes(); }
+                          catch (ReflectionTypeLoadException) { return Type.EmptyTypes; }
+                      }
+                     ).Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t)).OrderBy(t => t.Name).Select(t => (t, ObjectNames.NicifyVariableName(t.Name))).ToArray();
+             }
+            );
 
         private int                     _selectedRewardTypeIndex = 0;
         private int                     _typeFilterIndex         = 0;
@@ -28,7 +33,7 @@ namespace Vertigo.CardWheel.Editor
         protected override string CreateDialogPathRoot => "Assets/_Game/CardWheel/Configs";
         protected override string CreateDialogFileName => "NewReward.asset";
 
-        private static string[] TypeFilterOptions => new[] { "All" }.Concat(_rewardTypes.Select(r => r.Label)).ToArray();
+        private static string[] TypeFilterOptions => new[] { "All" }.Concat(_rewardTypes.Value.Select(r => r.Label)).ToArray();
 
         protected override void RefreshAssetList()
         {
@@ -46,7 +51,7 @@ namespace Vertigo.CardWheel.Editor
             }
             else
             {
-                var selectedType = _rewardTypes[_typeFilterIndex - 1].Type;
+                var selectedType = _rewardTypes.Value[_typeFilterIndex - 1].Type;
                 _assetList = _allAssets.Where(a => a.GetType() == selectedType).ToList();
             }
 
@@ -125,13 +130,13 @@ namespace Vertigo.CardWheel.Editor
                 (
                  "Reward Type",
                  _selectedRewardTypeIndex,
-                 _rewardTypes.Select(r => r.Label).ToArray()
+                 _rewardTypes.Value.Select(r => r.Label).ToArray()
                 );
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Create", GUILayout.Width(80)))
             {
-                CreateRewardOfType(_rewardTypes[_selectedRewardTypeIndex].Type);
+                CreateRewardOfType(_rewardTypes.Value[_selectedRewardTypeIndex].Type);
                 _showCreatePopup = false;
             }
 
@@ -167,26 +172,10 @@ namespace Vertigo.CardWheel.Editor
 
         protected override void DrawAssetFields()
         {
-            var so = _buffer.SerializedWorking;
-            so.Update();
-
             EditorGUILayout.LabelField("Type", _buffer.Working.GetType().Name);
-
             EditorGUILayout.Space(4);
 
-            var idProp     = so.FindProperty("id");
-            var iconProp   = so.FindProperty("icon");
-            var amountProp = so.FindProperty("amount");
-            var labelProp  = so.FindProperty("label");
-
-            EditorGUILayout.PropertyField(idProp,     new GUIContent("ID"));
-            EditorGUILayout.PropertyField(labelProp,  new GUIContent("Label"));
-            EditorGUILayout.PropertyField(amountProp, new GUIContent("Amount"));
-
-            EditorGUILayout.Space(4);
-            EditorGUILayout.PropertyField(iconProp, new GUIContent("Icon"));
-
-            so.ApplyModifiedProperties();
+            base.DrawAssetFields();
         }
     }
 }
