@@ -19,10 +19,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
   - {fileID: 11400000, guid: a1dfda3713a8dea4fa006c8e20baf2f2, type: 2}
   - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
-  - {fileID: 11400000, guid: 03b58d4ead9271040a9719986da54291, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
   - {fileID: 11400000, guid: 2790a920e80b6b24ab1c86630ebfc70f, type: 2}
-  - {fileID: 11400000, guid: b69db01aa919841429fc840ca9a0736e, type: 2}
-  - {fileID: 11400000, guid: 477d0d620a6b29a4d8a767779cc86862, type: 2}
+  - {fileID: 11400000, guid: fe9cc12f926a13340b1e4b4537243224, type: 2}
+  - {fileID: 11400000, guid: 3db181810a507014d8d3749a414f26e7, type: 2}
   zoneNumberSelectedColor: {r: 0, g: 0, b: 0, a: 1}
   zoneNumberPastColor: {r: 0.5597484, g: 0.5597484, b: 0.5597484, a: 1}
   zoneNumberFutureColor: {r: 0.9058824, g: 0.9058824, b: 0.9058824, a: 1}
