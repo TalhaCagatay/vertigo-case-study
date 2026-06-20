@@ -28,12 +28,16 @@ namespace Vertigo.CardWheel.UIs.Rewards
         private void RebuildLookup()
         {
             _entryLookup.Clear();
-            var rewardEntries = GetComponentsInChildren<RewardEntry>(true);
+            RewardEntry lastEntry     = null;
+            var         rewardEntries = GetComponentsInChildren<RewardEntry>(true);
             foreach (var entry in rewardEntries)
             {
                 if (string.IsNullOrEmpty(entry.Id)) continue;
                 _entryLookup[entry.Id] = entry;
+                lastEntry              = entry;
             }
+
+            if (lastEntry != null) LayoutRebuilder.ForceRebuildLayoutImmediate(lastEntry.transform as RectTransform);
         }
 
         public void ClearRewards()
@@ -54,7 +58,6 @@ namespace Vertigo.CardWheel.UIs.Rewards
             }
 
             UpdateData(new List<RewardItemData>(_rewardItems.Values));
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
         public bool TryGetRewardItem(string id, out RewardItemData item) => _rewardItems.TryGetValue(id, out item);
@@ -65,9 +68,10 @@ namespace Vertigo.CardWheel.UIs.Rewards
             animationIcon.transform.SetParent(transform, false);
 
             var flyingImage = animationIcon.GetComponent<Image>();
-            flyingImage.sprite = sliceIcon;
-            flyingImage.SetNativeSize();
-            flyingImage.transform.localScale *= 0.5f;
+            flyingImage.sprite         = sliceIcon;
+            flyingImage.preserveAspect = true;
+            // flyingImage.SetNativeSize();
+            // flyingImage.transform.localScale *= 0.5f;
 
             var canvas       = GetComponentInParent<Canvas>();
             var canvasCamera = canvas.worldCamera;

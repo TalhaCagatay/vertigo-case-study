@@ -17,9 +17,9 @@ namespace Vertigo.CardWheel.UIs
         private readonly UIController        _uiController;
         private readonly CardWheelController _cardWheelController;
 
-        private CardWheelScreen _screen;
-
-        private const int ZONE_BAR_ITEM_COUNT = 60;
+        private CardWheelScreen    _screen;
+        private List<ZoneItemData> _zoneItems = new();
+        private int                _zoneBarMaxZone;
 
         public bool IsInitialized { get; private set; }
 
@@ -99,6 +99,7 @@ namespace Vertigo.CardWheel.UIs
             _screen.SetupWheel(config, zone);
 
             _screen.ResetWheel();
+            ClearZoneBar();
             PopulateZoneBar(zone);
             _screen.ClearRewardPanel();
             UpdateButtonStates();
@@ -114,7 +115,7 @@ namespace Vertigo.CardWheel.UIs
 
             var preSelectedIndex = _cardWheelController.PreSelectedSliceIndex;
 
-            _screen.SpinToIndex(preSelectedIndex, OnSpinCompleted);
+            _screen.SpinToIndex(preSelectedIndex, _cardWheelController.CurrentTierConfig.SpinDuration, OnSpinCompleted);
         }
 
         private void OnSpinCompleted()
@@ -180,27 +181,70 @@ namespace Vertigo.CardWheel.UIs
 
         private void PopulateZoneBar(int currentZone)
         {
-            var items = new List<ZoneItemData>(ZONE_BAR_ITEM_COUNT);
-
-            var centerDesired = ZONE_BAR_ITEM_COUNT / 2;
-            var start         = Mathf.Max(1, currentZone - centerDesired);
-            var centerIndex   = currentZone - start;
-
-            for (int i = 0; i < ZONE_BAR_ITEM_COUNT; i++)
+            if (_zoneItems.Count == 0)
             {
-                var zn                     = start + i;
-                var cfg                    = _cardWheelController.GetConfigForZone(zn);
-                var isSuper                = zn > 0 && zn % 30 == 0;
-                var isSafe                 = !cfg.HasBomb;
-                var isPast                 = zn < currentZone;
-                var zoneNumberCurrentColor = cfg.ZoneNumberSelectedColor;
-                var zoneNumberPastColor    = cfg.ZoneNumberPastColor;
-                var zoneNumberFutureColor  = cfg.ZoneNumberFutureColor;
-                items.Add(new ZoneItemData(zn, $"Zone {zn}", isSuper, isSafe, isPast, zoneNumberCurrentColor, zoneNumberPastColor, zoneNumberFutureColor));
+                BuildInitialZoneRange(currentZone);
             }
 
-            _screen.SetupZoneBar(items);
-            _screen.CenterZoneOnIndex(centerIndex, 0.35f);
+            while (currentZone > _zoneBarMaxZone)
+            {
+                int zn  = _zoneBarMaxZone + 1;
+                var cfg = _cardWheelController.GetConfigForZone(zn);
+                _zoneItems.Add(BuildZoneItemData(zn, currentZone, cfg));
+                _zoneBarMaxZone = zn;
+            }
+
+            for (int i = 0; i < _zoneItems.Count; i++)
+            {
+                var  item   = _zoneItems[i];
+                bool isPast = item.ZoneNumber < currentZone;
+                if (item.IsPastZone != isPast)
+                {
+                    var cfg = _cardWheelController.GetConfigForZone(item.ZoneNumber);
+                    _zoneItems[i] = BuildZoneItemData(item.ZoneNumber, currentZone, cfg);
+                }
+            }
+
+            _screen.SetupZoneBar(_zoneItems);
+            _screen.CenterZoneOnIndex(currentZone - 1, 0.35f);
+        }
+
+        private void BuildInitialZoneRange(int currentZone)
+        {
+            _zoneItems.Clear();
+            _zoneBarMaxZone = 0;
+
+            int start = 1;
+            int end   = Mathf.Max(currentZone + 20, 50);
+
+            for (int zn = start; zn <= end; zn++)
+            {
+                var cfg = _cardWheelController.GetConfigForZone(zn);
+                _zoneItems.Add(BuildZoneItemData(zn, currentZone, cfg));
+            }
+            _zoneBarMaxZone = end;
+        }
+
+        private ZoneItemData BuildZoneItemData(int zn, int currentZone, WheelTierConfig cfg)
+        {
+            var isPast = zn < currentZone;
+            return new ZoneItemData
+                (
+                 zn,
+                 $"Zone {zn}",
+                 _cardWheelController.IsSuperZone,
+                 _cardWheelController.IsSafeZone,
+                 isPast,
+                 cfg.ZoneNumberSelectedColor,
+                 cfg.ZoneNumberPastColor,
+                 cfg.ZoneNumberFutureColor
+                );
+        }
+
+        private void ClearZoneBar()
+        {
+            _zoneItems.Clear();
+            _zoneBarMaxZone = 0;
         }
     }
 }

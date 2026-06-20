@@ -18,8 +18,6 @@ namespace Vertigo.CardWheel.UIs.Wheel
         [SerializeField] private RewardScrollView   rewardScrollView;
         [SerializeField] private ZoneScrollView     zoneScrollView;
 
-        [SerializeField] private float spinDuration = 3f;
-
         public event Action SpinClicked;
         public event Action LeaveClicked;
 
@@ -54,7 +52,7 @@ namespace Vertigo.CardWheel.UIs.Wheel
             cardWheelIndicator.Setup(config);
         }
 
-        public void SpinToIndex(int sliceIndex, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
+        public void SpinToIndex(int sliceIndex, float spinDuration, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
 
         public void ClearRewardPanel() => rewardScrollView.ClearRewards();
 

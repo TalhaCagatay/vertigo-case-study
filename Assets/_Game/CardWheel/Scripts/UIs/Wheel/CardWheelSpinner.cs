@@ -16,12 +16,14 @@ namespace Vertigo.CardWheel.UIs.Wheel
 
         private const float ANGLE_PER_SLICE = 360f / 8f;
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             spinnerImage    = GetComponent<Image>();
             slicesContainer = transform;
             sliceViews      = slicesContainer.GetComponentsInChildren<CardWheelSliceView>();
         }
+#endif
 
         public void Setup(WheelTierConfig config, int currentZone)
         {
