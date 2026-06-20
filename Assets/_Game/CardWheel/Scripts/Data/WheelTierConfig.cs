@@ -7,7 +7,6 @@ namespace Vertigo.CardWheel.Data
     [CreateAssetMenu(fileName = "WheelTierConfig", menuName = "CardWheel/Wheel Tier Config", order = 2)]
     public class WheelTierConfig : ScriptableObject
     {
-        [SerializeField] private WheelTierType       tierType;
         [SerializeField] private Sprite              spinnerSprite;
         [SerializeField] private Sprite              indicatorSprite;
         [SerializeField] private ARewardDefinition[] slices                  = new ARewardDefinition[8];
@@ -17,7 +16,6 @@ namespace Vertigo.CardWheel.Data
         [SerializeField] private float               spinDuration            = 3f;
         [SerializeField] private AnimationCurve      rewardScaleCurve        = AnimationCurve.Linear(0, 1, 100, 10);
 
-        public WheelTierType       TierType                => tierType;
         public Sprite              SpinnerSprite           => spinnerSprite;
         public Sprite              IndicatorSprite         => indicatorSprite;
         public ARewardDefinition[] Slices                  => slices;
