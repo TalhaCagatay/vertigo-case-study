@@ -457,7 +457,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 640806693677521278}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1727321754090239854}
@@ -537,7 +537,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 838905477599951886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 5712020123528008583}
@@ -617,7 +617,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1424391544753586434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 2824685111528560925}
@@ -909,7 +909,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3317092344762242100}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 6844963760928780202}
@@ -1029,7 +1029,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3683506037714676792}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e27a8a2c445cb4ea39881fae8284e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b3df484e24af1944aa8d0ddd7e81717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cellInterval: 0.14792235
@@ -1037,11 +1037,12 @@ MonoBehaviour:
   loop: 0
   cellContainer: {fileID: 6959557085270742687}
   reuseCellMarginCount: 0
-  paddingHead: 25
-  paddingTail: 25
+  paddingHead: 10
+  paddingTail: 10
   spacing: 10
-  cellSize: 100
   cellPrefab: {fileID: 5046742430775572246, guid: e6749d736cb03564b8a0e9d01097a679, type: 3}
+  cellSize: 100
+  flyDuration: 0.6
 --- !u!1 &3853022667513006774
 GameObject:
   m_ObjectHideFlags: 0
@@ -1406,7 +1407,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4698216149452031135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 6161127468734675332}
@@ -1666,7 +1667,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5160160104614050858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01bbf7e5f23147f3a1be649b9e491aa2, type: 3}
+  m_Script: {fileID: 11500000, guid: ab071201cb61dc348a7a13b9f0caaecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   indicatorImage: {fileID: 5160160104614050868}
@@ -1679,7 +1680,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5160160104794092058}
-  - component: {fileID: 5160160104794092133}
+  - component: {fileID: 3121085885203510183}
   - component: {fileID: 465017194340665293}
   m_Layer: 5
   m_Name: CardWheelScreen
@@ -1713,7 +1714,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5160160104794092133
+--- !u!114 &3121085885203510183
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1722,7 +1723,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5160160104794092059}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d5d8321b7a49a2a4aa0e6a1c0e0ea5, type: 3}
+  m_Script: {fileID: 11500000, guid: da446edf3c2cab245ad6be1b172c58a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cardWheelSpinner: {fileID: 7557582815674205936}
@@ -1731,7 +1732,6 @@ MonoBehaviour:
   leaveButton: {fileID: 6725944299362471267}
   rewardScrollView: {fileID: 7988198084682466624}
   zoneScrollView: {fileID: 9024058484412113059}
-  flyDuration: 0.6
   spinDuration: 3
 --- !u!114 &465017194340665293
 MonoBehaviour:
@@ -1842,7 +1842,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5160160104972934878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86c6e26d7ac14c00849e867041103b94, type: 3}
+  m_Script: {fileID: 11500000, guid: 34cf9f632f9c2c8478e27831c782c297, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spinnerImage: {fileID: 5160160104972934872}
@@ -2547,7 +2547,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7483247359951202518}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 6838617616111811816}
@@ -3064,7 +3064,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7950759268092206084}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 7359006141812485370}
@@ -3220,7 +3220,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8402166747890923150}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a0ad1d4ef1187549a4ea7f553e9a518, type: 3}
+  m_Script: {fileID: 11500000, guid: 860ad7c1a4805964490734cfd47bcb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   iconImage: {fileID: 1540789246555799149}

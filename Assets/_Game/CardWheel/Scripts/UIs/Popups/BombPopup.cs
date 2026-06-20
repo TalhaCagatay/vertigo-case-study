@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Game.CardWheel.UIs.Popups
+namespace Vertigo.CardWheel.UIs.Popups
 {
     public class BombPopup : BasePopup
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Game.CardWheel.Data
+namespace Vertigo.CardWheel.Data
 {
     [CreateAssetMenu(fileName = "ZoneWheelMapping", menuName = "CardWheel/Zone Wheel Mapping", order = 3)]
     public class ZoneWheelMapping : ScriptableObject

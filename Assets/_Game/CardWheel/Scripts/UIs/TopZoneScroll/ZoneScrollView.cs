@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
-namespace _Game.CardWheel.UIs.TopZoneScroll
+namespace Vertigo.CardWheel.UIs.TopZoneScroll
 {
     class ZoneScrollView : FancyScrollView<ZoneItemData, ZoneContext>
     {

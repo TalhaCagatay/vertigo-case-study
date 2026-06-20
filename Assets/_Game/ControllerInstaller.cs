@@ -1,7 +1,7 @@
-﻿using _Game.CardWheel.Controller;
-using _Game.CardWheel.Data;
-using _Game.CardWheel.UIs;
-using _Game.Config;
+﻿using Vertigo.CardWheel.Controller;
+using Vertigo.CardWheel.Data;
+using Vertigo.CardWheel.UIs;
+using com.core;
 using com.core.ui;
 using Reflex.Core;
 using Reflex.Enums;

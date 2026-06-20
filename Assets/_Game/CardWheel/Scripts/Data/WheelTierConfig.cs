@@ -1,8 +1,8 @@
 using System.Linq;
-using _Game.CardWheel.Data.Rewards;
+using Vertigo.CardWheel.Data.Rewards;
 using UnityEngine;
 
-namespace _Game.CardWheel.Data
+namespace Vertigo.CardWheel.Data
 {
     [CreateAssetMenu(fileName = "WheelTierConfig", menuName = "CardWheel/Wheel Tier Config", order = 2)]
     public class WheelTierConfig : ScriptableObject

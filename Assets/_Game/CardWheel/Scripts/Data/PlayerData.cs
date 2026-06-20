@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace _Game.CardWheel.Data
+namespace Vertigo.CardWheel.Data
 {
     /// <summary>
     /// This is not a place to save, a better approach would be having a saving system and passing PlayerData to it and save it.

@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using _Game.CardWheel.Data;
-using _Game.CardWheel.Data.Rewards;
-using _Game.CardWheel.State;
+using Vertigo.CardWheel.Data;
+using Vertigo.CardWheel.Data.Rewards;
+using Vertigo.CardWheel.State;
 using com.core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace _Game.CardWheel.Controller
+namespace Vertigo.CardWheel.Controller
 {
     public class CardWheelController : IController
     {

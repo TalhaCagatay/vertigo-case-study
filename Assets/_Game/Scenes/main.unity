@@ -285,7 +285,7 @@ GameObject:
   - component: {fileID: 996980425}
   - component: {fileID: 996980424}
   m_Layer: 0
-  m_Name: SceneScope
+  m_Name: di_scene_scope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

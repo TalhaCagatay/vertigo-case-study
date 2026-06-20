@@ -1,4 +1,4 @@
-namespace _Game.CardWheel.Data
+namespace Vertigo.CardWheel.Data
 {
     public enum WheelTierType
     {

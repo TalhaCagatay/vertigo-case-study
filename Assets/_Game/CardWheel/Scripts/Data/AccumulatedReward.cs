@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace _Game.CardWheel.Data
+namespace Vertigo.CardWheel.Data
 {
     [Serializable]
     public class AccumulatedReward

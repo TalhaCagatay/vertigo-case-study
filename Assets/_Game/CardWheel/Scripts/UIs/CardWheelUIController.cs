@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using _Game.CardWheel.Controller;
-using _Game.CardWheel.Data;
-using _Game.CardWheel.State;
-using _Game.CardWheel.UIs.Popups;
-using _Game.CardWheel.UIs.TopZoneScroll;
+using System.Collections.Generic;
+using Vertigo.CardWheel.Controller;
+using Vertigo.CardWheel.Data;
+using Vertigo.CardWheel.State;
+using Vertigo.CardWheel.UIs.Popups;
+using Vertigo.CardWheel.UIs.TopZoneScroll;
+using Vertigo.CardWheel.UIs.Wheel;
 using com.core;
 using com.core.ui;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace _Game.CardWheel.UIs
+namespace Vertigo.CardWheel.UIs
 {
     public class CardWheelUIController : IController
     {

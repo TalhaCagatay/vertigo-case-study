@@ -1,4 +1,4 @@
-namespace _Game.CardWheel.State
+namespace Vertigo.CardWheel.State
 {
     public enum WheelState
     {

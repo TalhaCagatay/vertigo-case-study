@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-namespace _Game.CardWheel.Data.Rewards
+namespace Vertigo.CardWheel.Data.Rewards
 {
     [CreateAssetMenu(menuName = "Rewards/Skill Point Reward")]
     public class SkillPointReward : ARewardDefinition
