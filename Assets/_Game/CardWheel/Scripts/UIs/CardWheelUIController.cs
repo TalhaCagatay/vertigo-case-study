@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using _Game.CardWheel.Controller;
 using _Game.CardWheel.Data;
 using _Game.CardWheel.State;
@@ -47,8 +46,6 @@ namespace _Game.CardWheel.UIs
             _screen.SetupWheel(config, zone);
 
             PopulateZoneBar(zone);
-
-            PopulateZoneBar(zone);
             UpdateButtonStates();
 
             IsInitialized = true;
@@ -67,7 +64,6 @@ namespace _Game.CardWheel.UIs
             _screen.SetupWheel(config, zone);
 
             PopulateZoneBar(zone);
-
             UpdateButtonStates();
         }
 
@@ -125,8 +121,6 @@ namespace _Game.CardWheel.UIs
             var preSelectedIndex = _cardWheelController.PreSelectedSliceIndex;
             var config           = _cardWheelController.CurrentTierConfig;
             var landedSlice      = config.Slices[preSelectedIndex];
-            var existingRewards  = _cardWheelController.GetAccumulatedRewards();
-            var alreadyExists    = existingRewards.Any(r => r.RewardType == landedSlice.RewardType);
             _cardWheelController.CompleteSpin();
 
             if (_cardWheelController.CurrentState == WheelState.GameOver) return;
@@ -136,13 +130,13 @@ namespace _Game.CardWheel.UIs
 
             var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
 
-            if (!alreadyExists) _screen.AddRewardEntry(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
+            _screen.AddOrUpdateReward(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
 
             _screen.PlayRewardAnimation
                 (
                  sliceWorldPos,
                  landedSlice.Icon,
-                 landedSlice.RewardType,
+                 landedSlice.id,
                  scaledAmount,
                  () =>
                  {

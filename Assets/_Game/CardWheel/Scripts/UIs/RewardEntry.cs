@@ -3,10 +3,11 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 namespace _Game.CardWheel.UIs
 {
-    public class RewardEntry : MonoBehaviour
+    public class RewardEntry : FancyScrollRectCell<RewardItemData, RewardContext>
     {
         [SerializeField] private Image                 iconImage;
         [SerializeField] private TMP_Text              amountText;
@@ -14,8 +15,7 @@ namespace _Game.CardWheel.UIs
 
         private int _currentAmount;
 
-        public string Label { get; private set; }
-        public string Id    { get; private set; }
+        public string Id { get; private set; }
 
         public RectTransform IconRectTransform => (RectTransform)iconImage.transform;
 
@@ -28,13 +28,12 @@ namespace _Game.CardWheel.UIs
         }
 #endif
 
-        public void Setup(Sprite icon, int amount, string id, string label)
+        public override void UpdateContent(RewardItemData itemData)
         {
-            iconImage.sprite = icon;
-            _currentAmount   = amount;
-            amountText.text  = $"x{amount}";
-            Id               = id;
-            Label            = label;
+            Id               = itemData.Id;
+            iconImage.sprite = itemData.Icon;
+            _currentAmount   = itemData.Amount;
+            amountText.text  = $"x{_currentAmount}";
         }
 
         public void PlayAddAnimation(int addedAmount, Action onComplete)
