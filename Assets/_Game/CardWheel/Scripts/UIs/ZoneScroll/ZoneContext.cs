@@ -1,4 +1,4 @@
-namespace Vertigo.CardWheel.UIs.TopZoneScroll
+namespace Vertigo.CardWheel.UIs.ZoneScroll
 {
     class ZoneContext
     {

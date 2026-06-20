@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Vertigo.CardWheel.UIs.TopZoneScroll
+namespace Vertigo.CardWheel.UIs.ZoneScroll
 {
     public class ZoneItemData
     {

@@ -3,7 +3,7 @@ using Vertigo.CardWheel.Controller;
 using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.State;
 using Vertigo.CardWheel.UIs.Popups;
-using Vertigo.CardWheel.UIs.TopZoneScroll;
+using Vertigo.CardWheel.UIs.ZoneScroll;
 using Vertigo.CardWheel.UIs.Wheel;
 using com.core;
 using com.core.ui;

@@ -1,9 +1,8 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-namespace Vertigo.CardWheel.UIs.TopZoneScroll
+namespace Vertigo.CardWheel.UIs.ZoneScroll
 {
     class ZoneCell : FancyCell<ZoneItemData, ZoneContext>
     {
@@ -13,10 +12,12 @@ namespace Vertigo.CardWheel.UIs.TopZoneScroll
 
         private float _currentPosition = 0f;
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
             zoneText = GetComponentInChildren<TMP_Text>();
         }
+#endif
 
         public override void Initialize()
         {

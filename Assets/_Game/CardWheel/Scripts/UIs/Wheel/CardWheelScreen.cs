@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.UIs.Rewards;
-using Vertigo.CardWheel.UIs.TopZoneScroll;
+using Vertigo.CardWheel.UIs.ZoneScroll;
 using com.core.ui;
 using UnityEngine;
 using UnityEngine.UI;
