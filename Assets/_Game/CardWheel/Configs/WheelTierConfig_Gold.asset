@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605ca627684b3ce43a13e13262d9aa6f, type: 3}
+  m_Name: WheelTierConfig_Gold
+  m_EditorClassIdentifier: 
+  spinnerSprite: {fileID: 21300000, guid: 7b1a1f505f222214fbd0121248d5ff87, type: 3}
+  indicatorSprite: {fileID: 21300000, guid: f60e66cdd9ef07e458de4843babd8879, type: 3}
+  slices:
+  - {fileID: 11400000, guid: b69db01aa919841429fc840ca9a0736e, type: 2}
+  - {fileID: 11400000, guid: 4e3873d9c4a7e2742aa7a6bdd7302d49, type: 2}
+  - {fileID: 11400000, guid: 8e8d9a6d1a135374e8cc2bf381f7a6de, type: 2}
+  - {fileID: 11400000, guid: 4c1a5ed423d35e04589c64f17230b2ec, type: 2}
+  - {fileID: 11400000, guid: a747c0afc1701674faa97484adf6e816, type: 2}
+  - {fileID: 11400000, guid: db7e549eb0190764a87a51a4616260b5, type: 2}
+  - {fileID: 11400000, guid: e97d2c842de5537418f7b75625bba8b9, type: 2}
+  - {fileID: 11400000, guid: c9afd86c77a0f2445bb09bfe8554f69b, type: 2}
+  zoneNumberSelectedColor: {r: 1, g: 0.79502773, b: 0.19182372, a: 1}
+  zoneNumberPastColor: {r: 0.6792453, g: 0.55627096, b: 0.1943751, a: 1}
+  zoneNumberFutureColor: {r: 1, g: 0.7960785, b: 0.19215688, a: 1}
+  spinDuration: 5
+  rewardScaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
