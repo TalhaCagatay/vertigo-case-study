@@ -22,10 +22,10 @@ namespace Vertigo.CardWheel.UIs.Screens
         {
             iconImage.sprite  = sliceData.Icon;
             iconImage.enabled = true;
-            amountText.text   = $"x{scaledAmount}";
+            amountText.SetText($"x{scaledAmount}");
             gameObject.name   = $"Slice_{sliceData.Label}";
         }
 
-        public void SetAmountText(string text) => amountText.text = text;
+        public void SetAmountText(string text) => amountText.SetText(text);
     }
 }

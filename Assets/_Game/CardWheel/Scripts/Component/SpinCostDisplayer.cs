@@ -17,7 +17,7 @@ namespace Vertigo.CardWheel.Component
 
         public void SetSpinCost(int cost)
         {
-            spinCostText.text = $"x{cost}";
+            spinCostText.SetText($"x{cost}");
         }
     }
 }

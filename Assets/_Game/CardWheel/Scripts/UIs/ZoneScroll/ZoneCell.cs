@@ -25,7 +25,7 @@ namespace Vertigo.CardWheel.UIs.ZoneScroll
 
         public override void UpdateContent(ZoneItemData itemData)
         {
-            zoneText.text = itemData.ZoneNumber.ToString();
+            zoneText.SetText(itemData.ZoneNumber.ToString());
             var selected = Context != null && Context.SelectedIndex == Index;
             if (selected)
             {

@@ -1,7 +1,7 @@
 ﻿using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
-using Vertigo.CardWheel.Data;
+using Vertigo.Player;
 
 namespace Vertigo.CardWheel.Component
 {
@@ -10,7 +10,7 @@ namespace Vertigo.CardWheel.Component
     {
         [SerializeField] private TMP_Text coinText;
 
-        [Inject] private PlayerData _playerData;
+        [Inject] private PlayerController _playerController;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -19,9 +19,14 @@ namespace Vertigo.CardWheel.Component
         }
 #endif
 
+        private void Awake()
+        {
+            Debug.Log($"_playerData.GetHashCode():{_playerController.GetHashCode()}");
+        }
+
         private void Update()
         {
-            coinText.text = _playerData.CoinBalance.ToString();
+            coinText.SetText(_playerController.PlayerData.CoinBalance.ToString());
         }
     }
 }

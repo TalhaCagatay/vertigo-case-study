@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using MemoryPack;
 
-namespace Vertigo.CardWheel.Data
+namespace Vertigo.Player.Data
 {
     [MemoryPackable]
     public partial class PlayerData
     {
         public int                     CoinBalance = 1000;
         public Dictionary<string, int> Rewards     = new();
-
+        
         public void AddReward(string id, int amount)
         {
             if (!Rewards.TryAdd(id, amount)) Rewards[id] += amount;

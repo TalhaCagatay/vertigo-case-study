@@ -7,7 +7,7 @@ using UnityEngine.UI.Extensions;
 
 namespace Vertigo.CardWheel.UIs.Rewards
 {
-    public class RewardEntry : FancyScrollRectCell<RewardItemData, RewardContext>
+    public class RewardCell : FancyScrollRectCell<RewardItemData, RewardContext>
     {
         [SerializeField] private Image                 iconImage;
         [SerializeField] private TMP_Text              amountText;
@@ -33,8 +33,10 @@ namespace Vertigo.CardWheel.UIs.Rewards
             Id               = itemData.Id;
             iconImage.sprite = itemData.Icon;
             _currentAmount   = itemData.Amount;
-            amountText.text  = $"x{_currentAmount}";
+            amountText.SetText($"x{_currentAmount}");
         }
+
+        public void Clear() => Id = string.Empty;
 
         public void PlayAddAnimation(int addedAmount, Action onComplete)
         {
@@ -50,7 +52,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
                       value =>
                       {
                           _currentAmount  = Mathf.RoundToInt(value);
-                          amountText.text = $"x{_currentAmount}";
+                          amountText.SetText($"x{_currentAmount}");
                       },
                       startAmount,
                       endAmount,

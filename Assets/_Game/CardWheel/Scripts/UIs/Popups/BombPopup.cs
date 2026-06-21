@@ -26,7 +26,7 @@ namespace Vertigo.CardWheel.UIs.Popups
             GiveUpClicked = onGiveUp;
             ReviveClicked = onRevive;
 
-            reviveCostText.text       = reviveCost.ToString();
+            reviveCostText.SetText(reviveCost.ToString());
             reviveButton.interactable = coinBalance >= reviveCost;
         }
 

@@ -1,5 +1,6 @@
 using Vertigo.CardWheel.Data;
 using UnityEngine;
+using Vertigo.Player.Data;
 
 namespace Vertigo.CardWheel.Data.Rewards
 {

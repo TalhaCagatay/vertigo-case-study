@@ -17,7 +17,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
         [SerializeField] private float      flyDuration = 0.6f;
         [SerializeField] private GameObject flyingIconPrefab;
 
-        private readonly Dictionary<string, RewardEntry>    _entryLookup = new();
+        private readonly Dictionary<string, RewardCell>     _entryLookup = new();
         private readonly Dictionary<string, RewardItemData> _rewardItems = new();
 
         protected override GameObject CellPrefab => cellPrefab;
@@ -32,21 +32,22 @@ namespace Vertigo.CardWheel.UIs.Rewards
         private void RebuildLookup()
         {
             _entryLookup.Clear();
-            RewardEntry lastEntry     = null;
-            var         rewardEntries = pool.Cast<RewardEntry>().ToList();
+            RewardCell lastCell      = null;
+            var        rewardEntries = pool.Cast<RewardCell>().ToList();
             foreach (var entry in rewardEntries)
             {
                 if (string.IsNullOrEmpty(entry.Id)) continue;
                 _entryLookup[entry.Id] = entry;
-                lastEntry              = entry;
+                lastCell               = entry;
             }
 
-            if (lastEntry != null) LayoutRebuilder.ForceRebuildLayoutImmediate(lastEntry.transform as RectTransform);
+            if (lastCell != null) LayoutRebuilder.ForceRebuildLayoutImmediate(lastCell.transform as RectTransform);
         }
 
         public void ClearRewards()
         {
             _rewardItems.Clear();
+            pool.Cast<RewardCell>().ToList().ForEach(cell => cell.Clear());
             UpdateData(new List<RewardItemData>());
         }
 

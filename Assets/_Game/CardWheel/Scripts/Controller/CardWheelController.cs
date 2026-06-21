@@ -7,16 +7,16 @@ using com.core;
 using com.core.data;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Vertigo.Player;
+using Vertigo.Player.Data;
 using Random = UnityEngine.Random;
 
 namespace Vertigo.CardWheel.Controller
 {
     public class CardWheelController : IController
     {
-        public const string PLAYER_DATA_SAVE_KEY = "player-data-key";
-
         public int ReviveCost = 50;
-        public int SpinCost   = 25;
+        public int SpinCost   = 10;
 
         public event Action<List<AccumulatedReward>> RewardsUpdated;
         public event Action<ARewardDefinition>       SpinCompleted;
@@ -40,14 +40,12 @@ namespace Vertigo.CardWheel.Controller
 
         private readonly ZoneWheelMapping        _zoneMapping;
         private readonly List<AccumulatedReward> _accumulatedRewards = new();
-        private readonly PlayerData              _playerData;
-        private readonly DataController          _dataController;
+        private readonly PlayerController        _playerController;
 
-        public CardWheelController(ZoneWheelMapping zoneMapping, PlayerData playerData, DataController dataController)
+        public CardWheelController(ZoneWheelMapping zoneMapping, PlayerController playerController)
         {
-            _zoneMapping    = zoneMapping;
-            _playerData     = playerData;
-            _dataController = dataController;
+            _zoneMapping      = zoneMapping;
+            _playerController = playerController;
             Initialize();
         }
 
@@ -83,13 +81,13 @@ namespace Vertigo.CardWheel.Controller
 
         public void PrepareSpin()
         {
-            if (!_playerData.SpendCoins(SpinCost))
+            if (!_playerController.PlayerData.SpendCoins(SpinCost))
             {
-                Debug.LogWarning($"[CardWheelController] Not enough coins to spin, requires:{SpinCost}, have:{_playerData.CoinBalance}");
+                Debug.LogWarning($"[CardWheelController] Not enough coins to spin, requires:{SpinCost}, have:{_playerController.PlayerData.CoinBalance}");
                 return;
             }
 
-            _dataController.Save(PLAYER_DATA_SAVE_KEY, _playerData);
+            _playerController.Save();
 
             if (CurrentState != WheelState.Idle)
             {
@@ -165,14 +163,12 @@ namespace Vertigo.CardWheel.Controller
                 return new List<AccumulatedReward>(_accumulatedRewards);
             }
 
-            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
-
             foreach (var reward in _accumulatedRewards)
             {
-                reward.Definition.Grant(savedData, reward.Amount);
+                reward.Definition.Grant(_playerController.PlayerData, reward.Amount);
             }
 
-            _dataController.Save(PLAYER_DATA_SAVE_KEY, savedData);
+            _playerController.Save();
 
             var rewards = new List<AccumulatedReward>(_accumulatedRewards);
             ResetState();
@@ -187,26 +183,18 @@ namespace Vertigo.CardWheel.Controller
                 return false;
             }
 
-            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
-
-            if (!savedData.SpendCoins(ReviveCost))
+            if (!_playerController.PlayerData.SpendCoins(ReviveCost))
             {
-                Debug.LogWarning($"[CardWheelController] Not enough coins to revive. Required: {ReviveCost}, Balance: {savedData.CoinBalance}");
+                Debug.LogWarning($"[CardWheelController] Not enough coins to revive. Required: {ReviveCost}, Balance: {_playerController.PlayerData.CoinBalance}");
                 return false;
             }
 
-            _dataController.Save(PLAYER_DATA_SAVE_KEY, savedData);
+            _playerController.Save();
 
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
             Debug.Log($"[CardWheelController] Player revived for {ReviveCost} coins, continuing from same zone");
             return true;
-        }
-
-        public int GetCoinBalance()
-        {
-            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
-            return savedData.CoinBalance;
         }
 
         public void GiveUp()

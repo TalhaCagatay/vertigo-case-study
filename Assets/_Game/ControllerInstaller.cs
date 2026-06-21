@@ -7,6 +7,7 @@ using com.core.ui;
 using Reflex.Core;
 using Reflex.Enums;
 using UnityEngine;
+using Vertigo.Player;
 using Resolution = Reflex.Enums.Resolution;
 
 namespace _Game
@@ -25,7 +26,7 @@ namespace _Game
             builder.RegisterType(typeof(UIController),          Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(GameConfigController),  Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(DataController),        Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(PlayerData),            Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(PlayerController),      Lifetime.Singleton, Resolution.Eager);
         }
     }
 }

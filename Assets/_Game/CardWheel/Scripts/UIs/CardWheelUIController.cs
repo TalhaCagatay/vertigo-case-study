@@ -12,6 +12,8 @@ using com.core.data;
 using com.core.ui;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Vertigo.Player;
+using Vertigo.Player.Data;
 
 namespace Vertigo.CardWheel.UIs
 {
@@ -19,7 +21,7 @@ namespace Vertigo.CardWheel.UIs
     {
         private readonly UIController        _uiController;
         private readonly CardWheelController _cardWheelController;
-        private readonly DataController      _dataController;
+        private readonly PlayerController    _playerController;
         private readonly ZoneWheelMapping    _zoneMapping;
 
         private CardWheelScreen    _screen;
@@ -29,11 +31,11 @@ namespace Vertigo.CardWheel.UIs
 
         public bool IsInitialized { get; private set; }
 
-        public CardWheelUIController(UIController uiController, CardWheelController cardWheelController, DataController dataController, ZoneWheelMapping zoneMapping)
+        public CardWheelUIController(UIController uiController, CardWheelController cardWheelController, PlayerController playerController, ZoneWheelMapping zoneMapping)
         {
             _uiController        = uiController;
             _cardWheelController = cardWheelController;
-            _dataController      = dataController;
+            _playerController    = playerController;
             _zoneMapping         = zoneMapping;
             Initialize().Forget();
         }
@@ -87,7 +89,7 @@ namespace Vertigo.CardWheel.UIs
         private async void BombDetonated()
         {
             var bombPopup   = await _uiController.PushPopupAsync<BombPopup>();
-            var coinBalance = _cardWheelController.GetCoinBalance();
+            var coinBalance = _playerController.PlayerData.CoinBalance;
             bombPopup.Setup(OnGiveUpClicked, OnReviveClicked, _cardWheelController.ReviveCost, coinBalance);
         }
 
@@ -266,8 +268,7 @@ namespace Vertigo.CardWheel.UIs
             _rewardScreen             =  await _uiController.ShowScreenAsync<RewardScreen>();
             _rewardScreen.BackClicked += OnRewardBackClicked;
 
-            var playerData  = _dataController.Load(CardWheelController.PLAYER_DATA_SAVE_KEY, new PlayerData());
-            var rewardItems = BuildRewardItemsFromPlayerData(playerData);
+            var rewardItems = BuildRewardItemsFromPlayerData(_playerController.PlayerData);
             _rewardScreen.DisplayRewards(rewardItems);
         }
 
