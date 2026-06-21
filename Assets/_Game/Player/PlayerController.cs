@@ -7,7 +7,7 @@ namespace Vertigo.Player
 {
     public class PlayerController : IController
     {
-        public const string PLAYER_DATA_SAVE_KEY = "player-data-key";
+        private const string PLAYER_DATA_SAVE_KEY = "player-data-key";
 
         private DataController _dataController;
 
@@ -28,7 +28,18 @@ namespace Vertigo.Player
             return UniTask.CompletedTask;
         }
 
-        public void       Save() => _dataController.Save(PLAYER_DATA_SAVE_KEY, PlayerData);
-        public PlayerData Load() => _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
+        public void Save() => _dataController.Save(PLAYER_DATA_SAVE_KEY, PlayerData);
+
+        public PlayerData Load()
+        {
+            PlayerData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
+            return PlayerData;
+        }
+
+        public async UniTask DeletePlayerData()
+        {
+            await _dataController.Delete(PLAYER_DATA_SAVE_KEY);
+            PlayerData = new();
+        }
     }
 }

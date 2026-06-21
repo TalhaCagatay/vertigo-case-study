@@ -15,9 +15,19 @@ namespace _Game
     public class ControllerInstaller : MonoBehaviour, IInstaller
     {
         [SerializeField] private ZoneWheelMapping zoneWheelMapping;
+        
+        public static Container Container { get; private set; }
 
         public void InstallBindings(ContainerBuilder builder)
         {
+            ContainerScope.OnRootContainerBuilding += containerBuilder =>
+            {
+                containerBuilder.OnContainerBuilt += container =>
+                {
+                    Container = container;
+                };
+            };
+            
             Debug.Log($"[ControllerInstaller] InstallBindings");
             builder.RegisterValue(zoneWheelMapping, new[] { typeof(ZoneWheelMapping) });
 
