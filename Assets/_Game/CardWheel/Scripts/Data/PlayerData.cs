@@ -1,23 +1,29 @@
-using System;
-using UnityEngine;
+using System.Collections.Generic;
+using MemoryPack;
 
 namespace Vertigo.CardWheel.Data
 {
-    /// <summary>
-    /// This is not a place to save, a better approach would be having a saving system and passing PlayerData to it and save it.
-    /// So the correct usage would be using PlayerData as a model class and having a separate saving system to save it both locally and to cloud.
-    /// </summary>
-    [Serializable]
-    public class PlayerData
+    [MemoryPackable]
+    public partial class PlayerData
     {
-        public void Save(string id, int value)
+        public int                     CoinBalance = 1000;
+        public Dictionary<string, int> Rewards     = new();
+
+        public void AddReward(string id, int amount)
         {
-            PlayerPrefs.SetInt(id, value);
+            if (!Rewards.TryAdd(id, amount)) Rewards[id] += amount;
         }
 
-        public int Load(string id, int defaultValue = 0)
+        public int  GetRewardAmount(string id)     => Rewards.GetValueOrDefault(id, 0);
+        public void AddCoins(int           amount) => CoinBalance += amount;
+        public bool HasEnoughCoins(int     amount) => CoinBalance >= amount;
+
+        public bool SpendCoins(int amount)
         {
-            return PlayerPrefs.GetInt(id, defaultValue);
+            if (!HasEnoughCoins(amount)) return false;
+
+            CoinBalance -= amount;
+            return true;
         }
     }
 }

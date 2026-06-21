@@ -4,6 +4,7 @@ using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.Data.Rewards;
 using Vertigo.CardWheel.State;
 using com.core;
+using com.core.data;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -12,6 +13,11 @@ namespace Vertigo.CardWheel.Controller
 {
     public class CardWheelController : IController
     {
+        public const string PLAYER_DATA_SAVE_KEY = "player-data-key";
+
+        public int ReviveCost = 50;
+        public int SpinCost   = 25;
+
         public event Action<List<AccumulatedReward>> RewardsUpdated;
         public event Action<ARewardDefinition>       SpinCompleted;
         public event Action<ARewardDefinition>       RewardCollected;
@@ -35,11 +41,13 @@ namespace Vertigo.CardWheel.Controller
         private readonly ZoneWheelMapping        _zoneMapping;
         private readonly List<AccumulatedReward> _accumulatedRewards = new();
         private readonly PlayerData              _playerData;
+        private readonly DataController          _dataController;
 
-        public CardWheelController(ZoneWheelMapping zoneMapping, PlayerData playerData)
+        public CardWheelController(ZoneWheelMapping zoneMapping, PlayerData playerData, DataController dataController)
         {
-            _zoneMapping = zoneMapping;
-            _playerData  = playerData;
+            _zoneMapping    = zoneMapping;
+            _playerData     = playerData;
+            _dataController = dataController;
             Initialize();
         }
 
@@ -75,6 +83,14 @@ namespace Vertigo.CardWheel.Controller
 
         public void PrepareSpin()
         {
+            if (!_playerData.SpendCoins(SpinCost))
+            {
+                Debug.LogWarning($"[CardWheelController] Not enough coins to spin, requires:{SpinCost}, have:{_playerData.CoinBalance}");
+                return;
+            }
+
+            _dataController.Save(PLAYER_DATA_SAVE_KEY, _playerData);
+
             if (CurrentState != WheelState.Idle)
             {
                 Debug.LogWarning("[CardWheelController] Cannot prepare spin: not in Idle state");
@@ -87,7 +103,7 @@ namespace Vertigo.CardWheel.Controller
 
             PreSelectedSliceIndex = Random.Range(0, sliceCount);
 
-            Debug.Log($"[CardWheelController] Pre-selected slice index: {PreSelectedSliceIndex} ({(config.Slices[PreSelectedSliceIndex]?.Label ?? "null")})");
+            Debug.Log($"[CardWheelController] Pre-selected slice index: {PreSelectedSliceIndex} ({config.Slices[PreSelectedSliceIndex].Label})");
         }
 
         public void OnSpinStarted()
@@ -98,9 +114,9 @@ namespace Vertigo.CardWheel.Controller
 
         public void CompleteSpin()
         {
-            var landedSlice = CurrentTierConfig.Slices[PreSelectedSliceIndex];
+            var rewardDefinition = CurrentTierConfig.Slices[PreSelectedSliceIndex];
 
-            if (landedSlice is BombReward)
+            if (rewardDefinition is BombReward) // it is fine to handle bomb like this since it is the only special case.
             {
                 SetState(WheelState.GameOver);
                 BombDetonated?.Invoke();
@@ -108,27 +124,27 @@ namespace Vertigo.CardWheel.Controller
             else
             {
                 var multiplier   = CurrentTierConfig.GetRewardMultiplier(CurrentZone);
-                var scaledAmount = Mathf.RoundToInt(landedSlice.Amount * multiplier);
+                var scaledAmount = Mathf.RoundToInt(rewardDefinition.Amount * multiplier);
 
-                AddReward(landedSlice, scaledAmount);
+                AddReward(rewardDefinition, scaledAmount);
                 SetState(WheelState.Result);
             }
-            SpinCompleted?.Invoke(landedSlice);
+            SpinCompleted?.Invoke(rewardDefinition);
         }
 
-        private void AddReward(ARewardDefinition slice, int scaledAmount)
+        private void AddReward(ARewardDefinition rewardDefinition, int scaledAmount)
         {
-            var existing = _accumulatedRewards.Find(r => r.RewardType == slice.RewardType);
+            var existing = _accumulatedRewards.Find(r => r.Id == rewardDefinition.id);
             if (existing != null)
             {
                 existing.Add(scaledAmount);
             }
             else
             {
-                _accumulatedRewards.Add(new AccumulatedReward(slice.RewardType, slice.Icon, slice.id, slice.Label, scaledAmount));
+                _accumulatedRewards.Add(new AccumulatedReward(rewardDefinition, scaledAmount));
             }
 
-            RewardCollected?.Invoke(slice);
+            RewardCollected?.Invoke(rewardDefinition);
             RewardsUpdated?.Invoke(new List<AccumulatedReward>(_accumulatedRewards));
         }
 
@@ -149,41 +165,48 @@ namespace Vertigo.CardWheel.Controller
                 return new List<AccumulatedReward>(_accumulatedRewards);
             }
 
+            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
+
             foreach (var reward in _accumulatedRewards)
             {
-                var slice = FindSliceByRewardType(reward.RewardType);
-                if (slice != null)
-                {
-                    slice.Grant(_playerData, reward.Amount);
-                }
+                reward.Definition.Grant(savedData, reward.Amount);
             }
+
+            _dataController.Save(PLAYER_DATA_SAVE_KEY, savedData);
 
             var rewards = new List<AccumulatedReward>(_accumulatedRewards);
             ResetState();
             return rewards;
         }
 
-        private ARewardDefinition FindSliceByRewardType(string rewardType)
-        {
-            foreach (var slice in CurrentTierConfig.Slices)
-            {
-                if (slice.RewardType == rewardType)
-                    return slice;
-            }
-            return null;
-        }
-
-        public void Revive()
+        public bool Revive()
         {
             if (CurrentState != WheelState.GameOver)
             {
                 Debug.LogWarning("[CardWheelController] Revive called but not in GameOver state");
-                return;
+                return false;
             }
+
+            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
+
+            if (!savedData.SpendCoins(ReviveCost))
+            {
+                Debug.LogWarning($"[CardWheelController] Not enough coins to revive. Required: {ReviveCost}, Balance: {savedData.CoinBalance}");
+                return false;
+            }
+
+            _dataController.Save(PLAYER_DATA_SAVE_KEY, savedData);
 
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
-            Debug.Log("[CardWheelController] Player revived, continuing from same zone");
+            Debug.Log($"[CardWheelController] Player revived for {ReviveCost} coins, continuing from same zone");
+            return true;
+        }
+
+        public int GetCoinBalance()
+        {
+            var savedData = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
+            return savedData.CoinBalance;
         }
 
         public void GiveUp()

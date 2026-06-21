@@ -39,8 +39,6 @@ namespace com.core.ui
             _uiParent      = Object.Instantiate(uiParentPrefab);
             _uiParent.name = "UIParent";
 
-            Object.DontDestroyOnLoad(_uiParent.gameObject);
-
             IsInitialized = true;
             return UniTask.CompletedTask;
         }
@@ -153,7 +151,6 @@ namespace com.core.ui
             var type = typeof(T);
             var path = $"{resourcesPath}/{type.Name}";
             var go   = Resources.Load<GameObject>(path);
-            // return go != null ? go.GetComponent<T>() : null;
             return go.GetComponent<T>();
         }
 

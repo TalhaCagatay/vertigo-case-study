@@ -1,4 +1,5 @@
-﻿using Vertigo.CardWheel.Controller;
+﻿using com.core.data;
+using Vertigo.CardWheel.Controller;
 using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.UIs;
 using com.core;
@@ -23,6 +24,7 @@ namespace _Game
             builder.RegisterType(typeof(CardWheelUIController), Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(UIController),          Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(GameConfigController),  Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(DataController),        Lifetime.Singleton, Resolution.Eager);
             builder.RegisterType(typeof(PlayerData),            Lifetime.Singleton, Resolution.Eager);
         }
     }

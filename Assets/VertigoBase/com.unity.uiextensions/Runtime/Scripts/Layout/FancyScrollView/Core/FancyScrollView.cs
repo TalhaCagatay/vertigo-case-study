@@ -42,7 +42,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         [SerializeField] protected Transform cellContainer = default;
 
-        readonly IList<FancyCell<TItemData, TContext>> pool = new List<FancyCell<TItemData, TContext>>();
+        public readonly IList<FancyCell<TItemData, TContext>> pool = new List<FancyCell<TItemData, TContext>>();
 
         /// <summary>
         /// 初期化済みかどうか.
@@ -76,7 +76,9 @@ namespace UnityEngine.UI.Extensions
         /// <remarks>
         /// 最初にセルが生成される直前に呼び出されます.
         /// </remarks>
-        protected virtual void Initialize() { }
+        protected virtual void Initialize()
+        {
+        }
 
         /// <summary>
         /// 渡されたアイテム一覧に基づいて表示内容を更新します.
@@ -114,8 +116,8 @@ namespace UnityEngine.UI.Extensions
 
             currentPosition = position;
 
-            var p = position - scrollOffset / cellInterval;
-            var firstIndex = Mathf.CeilToInt(p);
+            var p             = position - scrollOffset / cellInterval;
+            var firstIndex    = Mathf.CeilToInt(p);
             var firstPosition = (Mathf.Ceil(p) - p) * cellInterval;
 
             if (firstPosition + pool.Count * cellInterval < 1f)
@@ -128,7 +130,7 @@ namespace UnityEngine.UI.Extensions
 
         void ResizePool(float firstPosition)
         {
-            Debug.Assert(CellPrefab != null);
+            Debug.Assert(CellPrefab    != null);
             Debug.Assert(cellContainer != null);
 
             var addCount = Mathf.CeilToInt((1f - firstPosition) / cellInterval) - pool.Count;
@@ -137,9 +139,16 @@ namespace UnityEngine.UI.Extensions
                 var cell = Instantiate(CellPrefab, cellContainer).GetComponent<FancyCell<TItemData, TContext>>();
                 if (cell == null)
                 {
-                    throw new MissingComponentException(string.Format(
-                        "FancyCell<{0}, {1}> component not found in {2}.",
-                        typeof(TItemData).FullName, typeof(TContext).FullName, CellPrefab.name));
+                    throw new MissingComponentException
+                        (
+                         string.Format
+                             (
+                              "FancyCell<{0}, {1}> component not found in {2}.",
+                              typeof(TItemData).FullName,
+                              typeof(TContext).FullName,
+                              CellPrefab.name
+                             )
+                        );
                 }
 
                 cell.SetContext(Context);
@@ -153,9 +162,9 @@ namespace UnityEngine.UI.Extensions
         {
             for (var i = 0; i < pool.Count; i++)
             {
-                var index = firstIndex + i;
+                var index    = firstIndex    + i;
                 var position = firstPosition + i * cellInterval;
-                var cell = pool[CircularIndex(index, pool.Count)];
+                var cell     = pool[CircularIndex(index, pool.Count)];
 
                 if (loop)
                 {
@@ -182,16 +191,16 @@ namespace UnityEngine.UI.Extensions
         int CircularIndex(int i, int size) => size < 1 ? 0 : i < 0 ? size - 1 + (i + 1) % size : i % size;
 
 #if UNITY_EDITOR
-        bool cachedLoop;
+        bool  cachedLoop;
         float cachedCellInterval, cachedScrollOffset;
 
         void LateUpdate()
         {
-            if (cachedLoop != loop ||
+            if (cachedLoop         != loop         ||
                 cachedCellInterval != cellInterval ||
                 cachedScrollOffset != scrollOffset)
             {
-                cachedLoop = loop;
+                cachedLoop         = loop;
                 cachedCellInterval = cellInterval;
                 cachedScrollOffset = scrollOffset;
 
@@ -204,7 +213,9 @@ namespace UnityEngine.UI.Extensions
     /// <summary>
     /// <see cref="FancyScrollView{TItemData}"/> のコンテキストクラス.
     /// </summary>
-    public sealed class NullContext { }
+    public sealed class NullContext
+    {
+    }
 
     /// <summary>
     /// スクロールビューを実装するための抽象基底クラス.
@@ -212,5 +223,7 @@ namespace UnityEngine.UI.Extensions
     /// </summary>
     /// <typeparam name="TItemData"></typeparam>
     /// <seealso cref="FancyScrollView{TItemData, TContext}"/>
-    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, NullContext> { }
+    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, NullContext>
+    {
+    }
 }

@@ -1,5 +1,6 @@
 using System;
 using com.core.ui;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +8,9 @@ namespace Vertigo.CardWheel.UIs.Popups
 {
     public class BombPopup : BasePopup
     {
-        [SerializeField] private Button giveUpButton;
-        [SerializeField] private Button reviveButton;
+        [SerializeField] private Button   giveUpButton;
+        [SerializeField] private Button   reviveButton;
+        [SerializeField] private TMP_Text reviveCostText;
 
         private event Action GiveUpClicked;
         private event Action ReviveClicked;
@@ -19,10 +21,13 @@ namespace Vertigo.CardWheel.UIs.Popups
             reviveButton.onClick.AddListener(OnReviveClicked);
         }
 
-        public void Setup(Action onGiveUp, Action onRevive)
+        public void Setup(Action onGiveUp, Action onRevive, int reviveCost, int coinBalance)
         {
             GiveUpClicked = onGiveUp;
             ReviveClicked = onRevive;
+
+            reviveCostText.text       = reviveCost.ToString();
+            reviveButton.interactable = coinBalance >= reviveCost;
         }
 
         private void OnGiveUpClicked() => GiveUpClicked?.Invoke();

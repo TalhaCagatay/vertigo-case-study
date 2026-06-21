@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Lean.Pool;
 using UnityEngine;
@@ -22,12 +23,6 @@ namespace Vertigo.CardWheel.UIs.Rewards
         protected override GameObject CellPrefab => cellPrefab;
         protected override float      CellSize   => cellSize;
 
-        // private void Awake()
-        // {
-        //     if (flyingIconPrefab != null)
-        //         LeanPool.Pre(flyingIconPrefab, 6);
-        // }
-
         private void UpdateData(IList<RewardItemData> items)
         {
             UpdateContents(items);
@@ -38,7 +33,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
         {
             _entryLookup.Clear();
             RewardEntry lastEntry     = null;
-            var         rewardEntries = GetComponentsInChildren<RewardEntry>(true);
+            var         rewardEntries = pool.Cast<RewardEntry>().ToList();
             foreach (var entry in rewardEntries)
             {
                 if (string.IsNullOrEmpty(entry.Id)) continue;

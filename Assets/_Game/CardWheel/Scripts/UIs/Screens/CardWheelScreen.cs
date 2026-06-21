@@ -5,7 +5,7 @@ using Vertigo.CardWheel.UIs.Rewards;
 using Vertigo.CardWheel.UIs.ZoneScroll;
 using com.core.ui;
 using UnityEngine;
-using UnityEngine.UI;
+using Vertigo.CardWheel.Component;
 
 namespace Vertigo.CardWheel.UIs.Screens
 {
@@ -13,13 +13,16 @@ namespace Vertigo.CardWheel.UIs.Screens
     {
         [SerializeField] private CardWheelSpinner   cardWheelSpinner;
         [SerializeField] private CardWheelIndicator cardWheelIndicator;
-        [SerializeField] private Button             spinButton;
-        [SerializeField] private Button             leaveButton;
+        [SerializeField] private SpinButton         spinButton;
+        [SerializeField] private LeaveButton        leaveButton;
+        [SerializeField] private RewardsButton      rewardsButton;
         [SerializeField] private RewardScrollView   rewardScrollView;
         [SerializeField] private ZoneScrollView     zoneScrollView;
+        [SerializeField] private SpinCostDisplayer  spinCostDisplayer;
 
         public event Action SpinClicked;
         public event Action LeaveClicked;
+        public event Action RewardsClicked;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -28,29 +31,38 @@ namespace Vertigo.CardWheel.UIs.Screens
             cardWheelIndicator = GetComponentInChildren<CardWheelIndicator>();
             rewardScrollView   = GetComponentInChildren<RewardScrollView>();
             zoneScrollView     = GetComponentInChildren<ZoneScrollView>();
+            leaveButton        = GetComponentInChildren<LeaveButton>();
+            rewardsButton      = GetComponentInChildren<RewardsButton>();
+            spinButton         = GetComponentInChildren<SpinButton>();
+            spinCostDisplayer  = GetComponentInChildren<SpinCostDisplayer>();
         }
 #endif
 
         private void Awake()
         {
-            spinButton.onClick.AddListener(OnSpinButtonClicked);
-            leaveButton.onClick.AddListener(OnLeaveButtonClicked);
+            spinButton.Clicked    += OnSpinButtonClicked;
+            leaveButton.Clicked   += OnLeaveButtonClicked;
+            rewardsButton.Clicked += OnRewardsButtonClicked;
         }
 
         private void OnDestroy()
         {
-            spinButton.onClick.RemoveListener(OnSpinButtonClicked);
-            leaveButton.onClick.RemoveListener(OnLeaveButtonClicked);
+            spinButton.Clicked    -= OnSpinButtonClicked;
+            leaveButton.Clicked   -= OnLeaveButtonClicked;
+            rewardsButton.Clicked -= OnRewardsButtonClicked;
         }
 
-        private void OnSpinButtonClicked()  => SpinClicked?.Invoke();
-        private void OnLeaveButtonClicked() => LeaveClicked?.Invoke();
+        private void OnSpinButtonClicked()    => SpinClicked?.Invoke();
+        private void OnLeaveButtonClicked()   => LeaveClicked?.Invoke();
+        private void OnRewardsButtonClicked() => RewardsClicked?.Invoke();
 
         public void SetupWheel(WheelTierConfig config, int currentZone)
         {
             cardWheelSpinner.Setup(config, currentZone);
             cardWheelIndicator.Setup(config);
         }
+
+        public void SetSpinCost(int cost) => spinCostDisplayer.SetSpinCost(cost);
 
         public void SpinToIndex(int sliceIndex, float spinDuration, Action onComplete) => cardWheelSpinner.SpinToIndex(sliceIndex, spinDuration, onComplete);
 
@@ -61,8 +73,8 @@ namespace Vertigo.CardWheel.UIs.Screens
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete) => rewardScrollView.PlayRewardAnimation
             (sliceWorldPosition, sliceIcon, rewardId, addedAmount, onComplete);
 
-        public void    SetSpinButtonInteractable(bool  interactable) => spinButton.interactable = interactable;
-        public void    SetLeaveButtonInteractable(bool interactable) => leaveButton.interactable = interactable;
+        public void    SetSpinButtonInteractable(bool  interactable) => spinButton.SetInteractable(interactable);
+        public void    SetLeaveButtonInteractable(bool interactable) => leaveButton.SetInteractable(interactable);
         public void    ResetWheel()                                  => cardWheelSpinner.ResetRotation();
         public void    SetupZoneBar(IList<ZoneItemData> items)       => zoneScrollView.UpdateData(items);
         public Vector3 GetSliceIconWorldPosition(int    sliceIndex)  => cardWheelSpinner.GetSliceIconWorldPosition(sliceIndex);

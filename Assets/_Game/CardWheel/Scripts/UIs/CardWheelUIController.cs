@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using Vertigo.CardWheel.Controller;
 using Vertigo.CardWheel.Data;
+using Vertigo.CardWheel.Data.Rewards;
 using Vertigo.CardWheel.State;
 using Vertigo.CardWheel.UIs.Popups;
+using Vertigo.CardWheel.UIs.Rewards;
 using Vertigo.CardWheel.UIs.ZoneScroll;
 using Vertigo.CardWheel.UIs.Screens;
 using com.core;
+using com.core.data;
 using com.core.ui;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -16,17 +19,22 @@ namespace Vertigo.CardWheel.UIs
     {
         private readonly UIController        _uiController;
         private readonly CardWheelController _cardWheelController;
+        private readonly DataController      _dataController;
+        private readonly ZoneWheelMapping    _zoneMapping;
 
         private CardWheelScreen    _screen;
+        private RewardScreen       _rewardScreen;
         private List<ZoneItemData> _zoneItems = new();
         private int                _zoneBarMaxZone;
 
         public bool IsInitialized { get; private set; }
 
-        public CardWheelUIController(UIController uiController, CardWheelController cardWheelController)
+        public CardWheelUIController(UIController uiController, CardWheelController cardWheelController, DataController dataController, ZoneWheelMapping zoneMapping)
         {
             _uiController        = uiController;
             _cardWheelController = cardWheelController;
+            _dataController      = dataController;
+            _zoneMapping         = zoneMapping;
             Initialize().Forget();
         }
 
@@ -39,8 +47,9 @@ namespace Vertigo.CardWheel.UIs
             _cardWheelController.RewardsUpdated += RewardsUpdated;
             _cardWheelController.BombDetonated  += BombDetonated;
 
-            _screen.SpinClicked  += SpinRequested;
-            _screen.LeaveClicked += LeaveRequested;
+            _screen.SpinClicked    += SpinRequested;
+            _screen.LeaveClicked   += LeaveRequested;
+            _screen.RewardsClicked += RewardsRequested;
 
             var config = _cardWheelController.CurrentTierConfig;
             var zone   = _cardWheelController.CurrentZone;
@@ -48,6 +57,8 @@ namespace Vertigo.CardWheel.UIs
 
             PopulateZoneBar(zone);
             UpdateButtonStates();
+
+            _screen.SetSpinCost(_cardWheelController.SpinCost);
 
             IsInitialized = true;
             Debug.Log("[CardWheelUIController] Initialized");
@@ -75,8 +86,9 @@ namespace Vertigo.CardWheel.UIs
 
         private async void BombDetonated()
         {
-            var bombPopup = await _uiController.PushPopupAsync<BombPopup>();
-            bombPopup.Setup(OnGiveUpClicked, OnReviveClicked);
+            var bombPopup   = await _uiController.PushPopupAsync<BombPopup>();
+            var coinBalance = _cardWheelController.GetCoinBalance();
+            bombPopup.Setup(OnGiveUpClicked, OnReviveClicked, _cardWheelController.ReviveCost, coinBalance);
         }
 
         private void OnGiveUpClicked()
@@ -88,8 +100,10 @@ namespace Vertigo.CardWheel.UIs
 
         private void OnReviveClicked()
         {
-            _uiController.PopPopup();
-            _cardWheelController.Revive();
+            if (_cardWheelController.Revive())
+            {
+                _uiController.PopPopup();
+            }
         }
 
         private void RefreshAfterReset()
@@ -245,6 +259,86 @@ namespace Vertigo.CardWheel.UIs
         {
             _zoneItems.Clear();
             _zoneBarMaxZone = 0;
+        }
+
+        private async void RewardsRequested()
+        {
+            _rewardScreen             =  await _uiController.ShowScreenAsync<RewardScreen>();
+            _rewardScreen.BackClicked += OnRewardBackClicked;
+
+            var playerData  = _dataController.Load(CardWheelController.PLAYER_DATA_SAVE_KEY, new PlayerData());
+            var rewardItems = BuildRewardItemsFromPlayerData(playerData);
+            _rewardScreen.DisplayRewards(rewardItems);
+        }
+
+        private void OnRewardBackClicked()
+        {
+            if (_rewardScreen != null)
+                _rewardScreen.BackClicked -= OnRewardBackClicked;
+
+            _uiController.ShowScreenAsync<CardWheelScreen>().Forget();
+        }
+
+        private List<RewardItemData> BuildRewardItemsFromPlayerData(PlayerData playerData)
+        {
+            var items     = new List<RewardItemData>();
+            var allSlices = GetAllSlices();
+
+            foreach (var kvp in playerData.Rewards)
+            {
+                var slice = FindSliceById(allSlices, kvp.Key);
+                if (slice != null)
+                {
+                    items.Add(new RewardItemData(slice.id, slice.Icon, slice.Label, kvp.Value));
+                }
+                else
+                {
+                    items.Add(new RewardItemData(kvp.Key, null, kvp.Key, kvp.Value));
+                }
+            }
+
+            if (playerData.CoinBalance > 0)
+            {
+                var coinSlice = FindCoinSlice(allSlices);
+                if (coinSlice != null)
+                {
+                    items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerData.CoinBalance));
+                }
+            }
+
+            return items;
+        }
+
+        private static ARewardDefinition FindCoinSlice(List<ARewardDefinition> slices)
+        {
+            foreach (var slice in slices)
+            {
+                if (slice is CoinReward)
+                    return slice;
+            }
+            return null;
+        }
+
+        private List<ARewardDefinition> GetAllSlices()
+        {
+            var slices = new List<ARewardDefinition>();
+            if (_zoneMapping.BronzeConfig != null)
+                slices.AddRange(_zoneMapping.BronzeConfig.Slices);
+            if (_zoneMapping.SilverConfig != null)
+                slices.AddRange(_zoneMapping.SilverConfig.Slices);
+            if (_zoneMapping.GoldConfig != null)
+                slices.AddRange(_zoneMapping.GoldConfig.Slices);
+            return slices;
+        }
+
+        private static ARewardDefinition FindSliceById(List<ARewardDefinition> slices, string id)
+        {
+            foreach (var slice in slices)
+            {
+                if (slice.id == id)
+                    return slice;
+            }
+            return null;
         }
     }
 }

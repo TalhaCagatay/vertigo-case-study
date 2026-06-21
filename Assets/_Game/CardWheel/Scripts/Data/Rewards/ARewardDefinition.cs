@@ -10,14 +10,14 @@ namespace Vertigo.CardWheel.Data.Rewards
         [SerializeField] private int    amount;
         [SerializeField] private string label;
 
-        public string RewardType => id;
-        public Sprite Icon       => icon;
-        public int    Amount     => amount;
-        public string Label      => label;
+        public string Id     => id;
+        public Sprite Icon   => icon;
+        public int    Amount => amount;
+        public string Label  => label;
 
         public virtual void Grant(PlayerData playerData, int value)
         {
-            playerData.Save(id, value);
+            playerData.AddReward(id, value);
         }
     }
 }
