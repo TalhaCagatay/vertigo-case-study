@@ -34,6 +34,13 @@ namespace Vertigo.Player
             return UniTask.CompletedTask;
         }
 
+        public void SetCoins(int amount)
+        {
+            _playerData.CoinBalance = amount;
+            Save();
+            BalanceUpdated?.Invoke(_playerData.CoinBalance);
+        }
+        
         public void AddCoins(int amount)
         {
             _playerData.AddCoins(amount);

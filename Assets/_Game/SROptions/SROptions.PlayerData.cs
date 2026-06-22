@@ -13,6 +13,22 @@ public partial class SROptions
         RestartAndroid();
     }
 
+    [Category("Economy")]
+    [Increment(100)]
+    public int Coin
+    {
+        get
+        {
+            var playerController = ControllerInstaller.Container.Resolve<PlayerController>();
+            return playerController.CoinBalance;
+        }
+        set
+        {
+            var playerController = ControllerInstaller.Container.Resolve<PlayerController>();
+            playerController.SetCoins(value);
+        }
+    }
+
     // Source - https://stackoverflow.com/a/70151431
     // Posted by Tamaya
     // Retrieved 2026-06-22, License - CC BY-SA 4.0
