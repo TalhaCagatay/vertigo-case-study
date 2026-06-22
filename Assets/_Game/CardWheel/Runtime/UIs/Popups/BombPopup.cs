@@ -21,6 +21,12 @@ namespace Vertigo.CardWheel.UIs.Popups
             reviveButton.onClick.AddListener(OnReviveClicked);
         }
 
+        private void OnDestroy()
+        {
+            giveUpButton.onClick.RemoveListener(OnGiveUpClicked);
+            reviveButton.onClick.RemoveListener(OnReviveClicked);
+        }
+
         public void Setup(Action onGiveUp, Action onRevive, int reviveCost, int coinBalance)
         {
             GiveUpClicked = onGiveUp;
@@ -32,11 +38,5 @@ namespace Vertigo.CardWheel.UIs.Popups
 
         private void OnGiveUpClicked() => GiveUpClicked?.Invoke();
         private void OnReviveClicked() => ReviveClicked?.Invoke();
-
-        private void OnDestroy()
-        {
-            giveUpButton.onClick.RemoveListener(OnGiveUpClicked);
-            reviveButton.onClick.RemoveListener(OnReviveClicked);
-        }
     }
 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Bomb_Reward
   m_EditorClassIdentifier: 
   id: bomb
-  icon: {fileID: 21300000, guid: 9824be5ad23932942b661f2d80559d9d, type: 3}
+  icon: {fileID: 21300000, guid: bee00bb95917fcc43a742ac36e6c3bbe, type: 3}
   amount: 1
   label: Bomb
+  prefab: {fileID: 0}

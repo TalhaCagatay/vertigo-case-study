@@ -18,12 +18,15 @@ namespace Vertigo.CardWheel.UIs.Screens
         }
 #endif
 
-        public void Setup(ARewardDefinition sliceData, int scaledAmount)
+        public void Setup(ARewardDefinition rewardDefinition, int scaledAmount)
         {
-            iconImage.sprite  = sliceData.Icon;
+            // disabling tmp_text causes layout group to increase icon size so bomb icon looks bigger & better.
+            amountText.gameObject.SetActive(rewardDefinition is not BombReward);
+
+            iconImage.sprite  = rewardDefinition.Icon;
             iconImage.enabled = true;
             amountText.SetText($"x{scaledAmount}");
-            gameObject.name   = $"Slice_{sliceData.Label}";
+            gameObject.name = $"Slice_{rewardDefinition.Label}";
         }
 
         public void SetAmountText(string text) => amountText.SetText(text);

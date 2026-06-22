@@ -102,10 +102,7 @@ namespace Vertigo.CardWheel.UIs
 
         private void OnReviveClicked()
         {
-            if (_cardWheelController.Revive())
-            {
-                _uiController.PopPopup();
-            }
+            if (_cardWheelController.Revive()) _uiController.PopPopup();
         }
 
         private void RefreshAfterReset()

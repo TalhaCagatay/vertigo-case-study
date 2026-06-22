@@ -87,8 +87,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 69e6d07871115e94ea11fbd482891bea, type: 3}
   - {fileID: 21300000, guid: 012818f89c9dc304c99702f1278c06d1, type: 3}
   - {fileID: 21300000, guid: b7eea59952f3c0d4b916ae4262d182f5, type: 3}
+  - {fileID: 21300000, guid: bee00bb95917fcc43a742ac36e6c3bbe, type: 3}
   - {fileID: 21300000, guid: d116a52abb10cd74fbff60bfff83915d, type: 3}
-  - {fileID: 21300000, guid: 9824be5ad23932942b661f2d80559d9d, type: 3}
   - {fileID: 21300000, guid: 1f27d5faf92629a4cafe092ef377807e, type: 3}
   - {fileID: 21300000, guid: 5e96fa1b95d72bc48848b0fbd1b5a1c2, type: 3}
   - {fileID: 21300000, guid: b0ea6d6b47938b64196f0fdbb4de433d, type: 3}
@@ -145,8 +145,8 @@ SpriteAtlas:
   - UI_button_grey_standard
   - UI_Icon_Renders_tier1_shotgun
   - UI_Icons_Shotgun_Points
-  - UI_Icon_Renders_tier2_rifle
   - ui_card_icon_death
+  - UI_Icon_Renders_tier2_rifle
   - UI_icon_chest_small_noligt
   - White
   - ui_icon_mle_bayonet_summer_vice

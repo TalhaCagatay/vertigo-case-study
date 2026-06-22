@@ -9,15 +9,9 @@ namespace Vertigo.CardWheel.Component
         [SerializeField] private TMP_Text spinCostText;
 
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            spinCostText = GetComponent<TMP_Text>();
-        }
+        private void OnValidate() => spinCostText = GetComponent<TMP_Text>();
 #endif
 
-        public void SetSpinCost(int cost)
-        {
-            spinCostText.SetText($"x{cost}");
-        }
+        public void SetSpinCost(int cost) => spinCostText.SetText($"<sprite=0>{cost}");
     }
 }
