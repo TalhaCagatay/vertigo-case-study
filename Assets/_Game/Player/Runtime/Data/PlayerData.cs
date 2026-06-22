@@ -7,7 +7,7 @@ namespace Vertigo.Player.Data
     public partial class PlayerData
     {
         public int                     CoinBalance = 1000;
-        public Dictionary<string, int> Rewards;
+        public Dictionary<string, int> Rewards     = new();
 
         public void AddReward(string       id, int amount) => Rewards[id] = Rewards.GetValueOrDefault(id, 0) + amount;
         public int  GetRewardAmount(string id)     => Rewards.GetValueOrDefault(id, 0);
