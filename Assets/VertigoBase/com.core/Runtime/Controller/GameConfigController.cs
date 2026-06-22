@@ -11,7 +11,8 @@ namespace com.core
         
         public UniTask Initialize()
         {
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate  = 60;
+            Debug.unityLogger.logEnabled = true;
             
             IsInitialized = true;
             return UniTask.CompletedTask;
