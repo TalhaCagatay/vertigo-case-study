@@ -96,6 +96,7 @@ MonoBehaviour:
   iconImage: {fileID: 387803225089950005}
   amountText: {fileID: 1462952474448613202}
   horizontalLayoutGroup: {fileID: 819569225155976228}
+  contentSizeFitter: {fileID: 2821084114883659449}
 --- !u!1 &5202043499246894320
 GameObject:
   m_ObjectHideFlags: 0
