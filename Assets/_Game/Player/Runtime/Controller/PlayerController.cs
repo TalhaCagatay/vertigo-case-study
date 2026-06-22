@@ -19,12 +19,13 @@ namespace Vertigo.Player
 
         public IReadOnlyDictionary<string, int> Rewards       => _playerData.Rewards;
         public int                              CoinBalance   => _playerData.CoinBalance;
+        public int                              Order         { get; }
         public bool                             IsInitialized { get; private set; }
 
         public PlayerController(DataController dataController)
         {
             _dataController = dataController;
-            Initialize();
+            Order = InitOrder.Number;
         }
 
         public UniTask Initialize()
@@ -40,7 +41,7 @@ namespace Vertigo.Player
             Save();
             BalanceUpdated?.Invoke(_playerData.CoinBalance);
         }
-        
+
         public void AddCoins(int amount)
         {
             _playerData.AddCoins(amount);

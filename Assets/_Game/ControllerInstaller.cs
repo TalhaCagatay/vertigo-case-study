@@ -31,12 +31,12 @@ namespace _Game
             Debug.Log($"[ControllerInstaller] InstallBindings");
             builder.RegisterValue(zoneWheelMapping, new[] { typeof(ZoneWheelMapping) });
 
-            builder.RegisterType(typeof(CardWheelController),   Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(CardWheelUIController), Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(UIController),          Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(GameConfigController),  Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(DataController),        Lifetime.Singleton, Resolution.Eager);
-            builder.RegisterType(typeof(PlayerController),      Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(CardWheelController),   new[] { typeof(CardWheelController), typeof(IController) },   Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(CardWheelUIController), new[] { typeof(CardWheelUIController), typeof(IController) }, Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(UIController),          new[] { typeof(UIController), typeof(IController) },          Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(GameConfigController),  new[] { typeof(GameConfigController), typeof(IController) },  Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(DataController),        new[] { typeof(DataController), typeof(IController) },        Lifetime.Singleton, Resolution.Eager);
+            builder.RegisterType(typeof(PlayerController),      new[] { typeof(PlayerController), typeof(IController) },      Lifetime.Singleton, Resolution.Eager);
         }
     }
 }

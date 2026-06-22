@@ -24,6 +24,6 @@ namespace Vertigo.CardWheel.Component
 
         private void OnDestroy() => _playerController.BalanceUpdated -= OnBalanceUpdated;
 
-        private void OnBalanceUpdated(int coins) => coinText.SetText(coins.ToString());
+        private void OnBalanceUpdated(int coins) => coinText.SetText($"<sprite=0>{coins}");
     }
 }

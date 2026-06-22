@@ -8,12 +8,10 @@ using Vertigo.CardWheel.UIs.Rewards;
 using Vertigo.CardWheel.UIs.ZoneScroll;
 using Vertigo.CardWheel.UIs.Screens;
 using com.core;
-using com.core.data;
 using com.core.ui;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Vertigo.Player;
-using Vertigo.Player.Data;
 
 namespace Vertigo.CardWheel.UIs
 {
@@ -29,6 +27,7 @@ namespace Vertigo.CardWheel.UIs
         private List<ZoneItemData> _zoneItems = new();
         private int                _zoneBarMaxZone;
 
+        public int  Order         { get; }
         public bool IsInitialized { get; private set; }
 
         public CardWheelUIController(UIController uiController, CardWheelController cardWheelController, PlayerController playerController, ZoneWheelMapping zoneMapping)
@@ -37,7 +36,7 @@ namespace Vertigo.CardWheel.UIs
             _cardWheelController = cardWheelController;
             _playerController    = playerController;
             _zoneMapping         = zoneMapping;
-            Initialize().Forget();
+            Order                = InitOrder.Number;
         }
 
         public async UniTask Initialize()
@@ -199,7 +198,7 @@ namespace Vertigo.CardWheel.UIs
                 BuildInitialZoneRange(currentZone);
             }
 
-            while (currentZone > _zoneBarMaxZone)
+            while (currentZone >= _zoneBarMaxZone)
             {
                 int zn  = _zoneBarMaxZone + 1;
                 var cfg = _cardWheelController.GetConfigForZone(zn);

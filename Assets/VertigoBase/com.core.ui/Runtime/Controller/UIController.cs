@@ -19,12 +19,12 @@ namespace com.core.ui
         private BaseScreen _currentScreen;
         private UIParent   _uiParent;
 
+        public int  Order         { get; }
         public bool IsInitialized { get; private set; }
 
         public UIController()
         {
-            Debug.Log($"UIController ctor");
-            Initialize();
+            Order = InitOrder.Number;
         }
         
         public UniTask Initialize()

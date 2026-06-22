@@ -12,6 +12,6 @@ namespace Vertigo.CardWheel.Component
         private void OnValidate() => spinCostText = GetComponent<TMP_Text>();
 #endif
 
-        public void SetSpinCost(int cost) => spinCostText.SetText($"<sprite=0>{cost}");
+        public void SetSpinCost(int cost) => spinCostText.SetText($"<sprite=0>x{cost}");
     }
 }
