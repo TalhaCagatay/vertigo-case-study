@@ -125,8 +125,7 @@ namespace Vertigo.CardWheel.Controller
             }
             else
             {
-                var multiplier   = CurrentTierConfig.GetRewardMultiplier(CurrentZone);
-                var scaledAmount = Mathf.RoundToInt(rewardDefinition.Amount * multiplier);
+                var scaledAmount = CurrentTierConfig.GetScaledRewardAmount(CurrentZone, rewardDefinition.Amount);
 
                 AddReward(rewardDefinition, scaledAmount);
                 SetState(WheelState.Result);

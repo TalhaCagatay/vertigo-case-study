@@ -29,12 +29,10 @@ namespace Vertigo.CardWheel.UIs.Screens
         {
             spinnerImage.sprite = config.SpinnerSprite;
 
-            var multiplier = config.GetRewardMultiplier(currentZone);
-
             for (int i = 0; i < Mathf.Min(sliceViews.Length, config.Slices.Length); i++)
             {
                 var sliceData    = config.Slices[i];
-                var scaledAmount = Mathf.RoundToInt(sliceData.Amount * multiplier);
+                var scaledAmount = config.GetScaledRewardAmount(currentZone, sliceData.Amount);
                 sliceViews[i].Setup(sliceData, scaledAmount);
             }
         }
@@ -48,7 +46,7 @@ namespace Vertigo.CardWheel.UIs.Screens
             const int FULL_SPINS = 5;
 
             var sliceAngle  = targetSliceIndex * ANGLE_PER_SLICE;
-            var totalSpins  = FULL_SPINS * 360f;
+            var totalSpins  = FULL_SPINS       * 360f;
             var overshoot   = UnityEngine.Random.Range(5f, 22.5f);
             var targetAngle = sliceAngle - totalSpins - overshoot;
 

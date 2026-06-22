@@ -140,8 +140,7 @@ namespace Vertigo.CardWheel.UIs
 
             if (_cardWheelController.CurrentState == WheelState.GameOver) return;
 
-            var multiplier   = config.GetRewardMultiplier(_cardWheelController.CurrentZone);
-            var scaledAmount = Mathf.RoundToInt(landedSlice.Amount * multiplier);
+            var scaledAmount = config.GetScaledRewardAmount(_cardWheelController.CurrentZone, landedSlice.Amount);
 
             var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
 
@@ -212,7 +211,7 @@ namespace Vertigo.CardWheel.UIs
             _screen.SetupZoneBar(_zoneItems);
             _screen.CenterZoneOnIndex(currentZone - 1, 0.35f);
         }
-        
+
         private void UpdatePastStates(int currentZone)
         {
             for (int i = 0; i < _zoneItems.Count; i++)
@@ -238,7 +237,7 @@ namespace Vertigo.CardWheel.UIs
                 AddZoneItem(zn, currentZone);
             }
         }
-        
+
         private void AddZoneItem(int zone, int currentZone)
         {
             var cfg = _cardWheelController.GetConfigForZone(zone);

@@ -14,6 +14,7 @@ namespace Vertigo.CardWheel.Data
         [SerializeField] private Color               zoneNumberPastColor     = Color.black;
         [SerializeField] private Color               zoneNumberFutureColor   = Color.black;
         [SerializeField] private float               spinDuration            = 3f;
+        [SerializeField] private float               rewardMultiplier        = 10;
         [SerializeField] private AnimationCurve      rewardScaleCurve        = AnimationCurve.Linear(0, 1, 100, 10);
 
         public Sprite              SpinnerSprite           => spinnerSprite;
@@ -26,9 +27,11 @@ namespace Vertigo.CardWheel.Data
         public float               SpinDuration            => spinDuration;
         public AnimationCurve      RewardScaleCurve        => rewardScaleCurve;
 
-        public float GetRewardMultiplier(int zone)
+        public int GetScaledRewardAmount(int zone, int amount)
         {
-            return rewardScaleCurve.Evaluate(zone);
+            float t          = 1f - Mathf.Exp(-zone / 100f);
+            float multiplier = rewardScaleCurve.Evaluate(t);
+            return amount + Mathf.RoundToInt(multiplier * amount * rewardMultiplier);
         }
     }
 }
