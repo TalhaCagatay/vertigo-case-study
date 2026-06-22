@@ -21,11 +21,12 @@ namespace Vertigo.CardWheel.UIs
         private readonly CardWheelController _cardWheelController;
         private readonly PlayerController    _playerController;
         private readonly ZoneWheelMapping    _zoneMapping;
+        private readonly List<ZoneItemData>  _zoneItems = new();
 
-        private CardWheelScreen    _screen;
-        private RewardScreen       _rewardScreen;
-        private List<ZoneItemData> _zoneItems = new();
-        private int                _zoneBarMaxZone;
+        private const int VisibleAheadCount = 10;
+
+        private CardWheelScreen _screen;
+        private RewardScreen    _rewardScreen;
 
         public int Order { get; }
 
@@ -198,43 +199,50 @@ namespace Vertigo.CardWheel.UIs
                 BuildInitialZoneRange(currentZone);
             }
 
-            while (currentZone >= _zoneBarMaxZone)
+            int desiredCount = currentZone + VisibleAheadCount;
+
+            while (_zoneItems.Count < desiredCount)
             {
-                int zn  = _zoneBarMaxZone + 1;
-                var cfg = _cardWheelController.GetConfigForZone(zn);
-                _zoneItems.Add(BuildZoneItemData(zn, currentZone, cfg));
-                _zoneBarMaxZone = zn;
+                int zn = _zoneItems.Count + 1;
+                AddZoneItem(zn, currentZone);
             }
 
-            for (int i = 0; i < _zoneItems.Count; i++)
-            {
-                var  item   = _zoneItems[i];
-                bool isPast = item.ZoneNumber < currentZone;
-                if (item.IsPastZone != isPast)
-                {
-                    var cfg = _cardWheelController.GetConfigForZone(item.ZoneNumber);
-                    _zoneItems[i] = BuildZoneItemData(item.ZoneNumber, currentZone, cfg);
-                }
-            }
+            UpdatePastStates(currentZone);
 
             _screen.SetupZoneBar(_zoneItems);
             _screen.CenterZoneOnIndex(currentZone - 1, 0.35f);
+        }
+        
+        private void UpdatePastStates(int currentZone)
+        {
+            for (int i = 0; i < _zoneItems.Count; i++)
+            {
+                var  item         = _zoneItems[i];
+                bool shouldBePast = item.ZoneNumber < currentZone;
+
+                if (item.IsPastZone != shouldBePast)
+                {
+                    var cfg = _cardWheelController.GetConfigForZone(item.ZoneNumber);
+                    _zoneItems[i] =
+                        BuildZoneItemData(item.ZoneNumber, currentZone, cfg);
+                }
+            }
         }
 
         private void BuildInitialZoneRange(int currentZone)
         {
             _zoneItems.Clear();
-            _zoneBarMaxZone = 0;
 
-            int start = 1;
-            int end   = Mathf.Max(currentZone + 20, 50);
-
-            for (int zn = start; zn <= end; zn++)
+            for (int zn = 1; zn <= currentZone + VisibleAheadCount; zn++)
             {
-                var cfg = _cardWheelController.GetConfigForZone(zn);
-                _zoneItems.Add(BuildZoneItemData(zn, currentZone, cfg));
+                AddZoneItem(zn, currentZone);
             }
-            _zoneBarMaxZone = end;
+        }
+        
+        private void AddZoneItem(int zone, int currentZone)
+        {
+            var cfg = _cardWheelController.GetConfigForZone(zone);
+            _zoneItems.Add(BuildZoneItemData(zone, currentZone, cfg));
         }
 
         private ZoneItemData BuildZoneItemData(int zn, int currentZone, WheelTierConfig cfg)
@@ -253,11 +261,7 @@ namespace Vertigo.CardWheel.UIs
                 );
         }
 
-        private void ClearZoneBar()
-        {
-            _zoneItems.Clear();
-            _zoneBarMaxZone = 0;
-        }
+        private void ClearZoneBar() => _zoneItems.Clear();
 
         private async void RewardsRequested()
         {
