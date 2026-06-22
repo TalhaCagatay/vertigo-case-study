@@ -235,8 +235,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 417461093958946603}
-  - component: {fileID: 417461093958946597}
-  - component: {fileID: 417461093958946596}
   m_Layer: 5
   m_Name: content
   m_TagString: Untagged
@@ -264,46 +262,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &417461093958946597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 417461093958946602}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 25
-    m_Right: 0
-    m_Top: 25
-    m_Bottom: 25
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
---- !u!114 &417461093958946596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 417461093958946602}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
 --- !u!1 &417461094819560731
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,6 +397,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6c3eb55471a49f192226fbc6777f454, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graphics:
+  - {fileID: 417461094819560726}
+  - {fileID: 417461095128191469}
   button: {fileID: 417461094819560725}
 --- !u!1 &417461094881876786
 GameObject:
@@ -746,15 +707,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b3df484e24af1944aa8d0ddd7e81717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellInterval: -16.939322
-  scrollOffset: -16.939322
+  cellInterval: 2.2458396
+  scrollOffset: 2.2458396
   loop: 0
   cellContainer: {fileID: 417461093958946603}
   reuseCellMarginCount: 0
   paddingHead: 10
   paddingTail: 10
   spacing: 10
-  cellPrefab: {fileID: 5046742430775572246, guid: e6749d736cb03564b8a0e9d01097a679, type: 3}
-  cellSize: 100
+  cellPrefab: {fileID: 2770270056932019811, guid: 67ac7f3ce933bf74399acaee7bc7dc36, type: 3}
+  cellSize: 200
   flyDuration: 0.6
   flyingIconPrefab: {fileID: 8340032824990579650, guid: 0ced9ca9632f0cc48a00bf032d93bf86, type: 3}

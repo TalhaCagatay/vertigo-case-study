@@ -13,20 +13,17 @@ namespace Vertigo.CardWheel.Component
         [Inject] private PlayerController _playerController;
 
 #if UNITY_EDITOR
-        private void OnValidate()
-        {
-            coinText = GetComponent<TMP_Text>();
-        }
+        private void OnValidate() => coinText = GetComponent<TMP_Text>();
 #endif
 
         private void Awake()
         {
-            Debug.Log($"_playerData.GetHashCode():{_playerController.GetHashCode()}");
+            _playerController.BalanceUpdated += OnBalanceUpdated;
+            OnBalanceUpdated(_playerController.CoinBalance);
         }
 
-        private void Update()
-        {
-            coinText.SetText(_playerController.PlayerData.CoinBalance.ToString());
-        }
+        private void OnDestroy() => _playerController.BalanceUpdated -= OnBalanceUpdated;
+
+        private void OnBalanceUpdated(int coins) => coinText.SetText(coins.ToString());
     }
 }

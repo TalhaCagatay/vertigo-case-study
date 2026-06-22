@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Vertigo.CardWheel.Component
 {
     [RequireComponent(typeof(Button))]
-    public class AButton<T> : MonoBehaviour
+    public abstract class AButton : MonoBehaviour
     {
         public event Action Clicked;
 

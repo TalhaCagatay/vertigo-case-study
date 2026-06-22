@@ -89,7 +89,7 @@ namespace Vertigo.CardWheel.UIs
         private async void BombDetonated()
         {
             var bombPopup   = await _uiController.PushPopupAsync<BombPopup>();
-            var coinBalance = _playerController.PlayerData.CoinBalance;
+            var coinBalance = _playerController.CoinBalance;
             bombPopup.Setup(OnGiveUpClicked, OnReviveClicked, _cardWheelController.ReviveCost, coinBalance);
         }
 
@@ -268,7 +268,7 @@ namespace Vertigo.CardWheel.UIs
             _rewardScreen             =  await _uiController.ShowScreenAsync<RewardScreen>();
             _rewardScreen.BackClicked += OnRewardBackClicked;
 
-            var rewardItems = BuildRewardItemsFromPlayerData(_playerController.PlayerData);
+            var rewardItems = BuildRewardItemsFromPlayerData(_playerController);
             _rewardScreen.DisplayRewards(rewardItems);
         }
 
@@ -280,12 +280,12 @@ namespace Vertigo.CardWheel.UIs
             _uiController.ShowScreenAsync<CardWheelScreen>().Forget();
         }
 
-        private List<RewardItemData> BuildRewardItemsFromPlayerData(PlayerData playerData)
+        private List<RewardItemData> BuildRewardItemsFromPlayerData(PlayerController playerController)
         {
             var items     = new List<RewardItemData>();
             var allSlices = GetAllSlices();
 
-            foreach (var kvp in playerData.Rewards)
+            foreach (var kvp in playerController.Rewards)
             {
                 var slice = FindSliceById(allSlices, kvp.Key);
                 if (slice != null)
@@ -298,12 +298,12 @@ namespace Vertigo.CardWheel.UIs
                 }
             }
 
-            if (playerData.CoinBalance > 0)
+            if (playerController.CoinBalance > 0)
             {
                 var coinSlice = FindCoinSlice(allSlices);
                 if (coinSlice != null)
                 {
-                    items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerData.CoinBalance));
+                    items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerController.CoinBalance));
                 }
             }
 

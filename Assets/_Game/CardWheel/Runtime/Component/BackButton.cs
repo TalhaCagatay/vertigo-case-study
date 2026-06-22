@@ -1,6 +1,6 @@
 ﻿namespace Vertigo.CardWheel.Component
 {
-    public class SpinButton : AButton<SpinButton>
+    public class BackButton : AButton
     {
         
     }

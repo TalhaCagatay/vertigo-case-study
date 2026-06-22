@@ -4,19 +4,18 @@ using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.Data.Rewards;
 using Vertigo.CardWheel.State;
 using com.core;
-using com.core.data;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Vertigo.Player;
-using Vertigo.Player.Data;
 using Random = UnityEngine.Random;
 
 namespace Vertigo.CardWheel.Controller
 {
     public class CardWheelController : IController
     {
-        public int ReviveCost = 50;
-        public int SpinCost   = 10;
+        // todo: get these from a config asset
+        public int ReviveCost => 50;
+        public int SpinCost   => 10;
 
         public event Action<List<AccumulatedReward>> RewardsUpdated;
         public event Action<ARewardDefinition>       SpinCompleted;
@@ -81,17 +80,15 @@ namespace Vertigo.CardWheel.Controller
 
         public void PrepareSpin()
         {
-            if (!_playerController.PlayerData.SpendCoins(SpinCost))
-            {
-                Debug.LogWarning($"[CardWheelController] Not enough coins to spin, requires:{SpinCost}, have:{_playerController.PlayerData.CoinBalance}");
-                return;
-            }
-
-            _playerController.Save();
-
             if (CurrentState != WheelState.Idle)
             {
                 Debug.LogWarning("[CardWheelController] Cannot prepare spin: not in Idle state");
+                return;
+            }
+
+            if (!_playerController.SpendCoins(SpinCost))
+            {
+                Debug.LogWarning($"[CardWheelController] Not enough coins to spin, requires:{SpinCost}, have:{_playerController.CoinBalance}");
                 return;
             }
 
@@ -112,6 +109,12 @@ namespace Vertigo.CardWheel.Controller
 
         public void CompleteSpin()
         {
+            if (PreSelectedSliceIndex < 0)
+            {
+                Debug.LogError("[CardWheelController] No slice selected.");
+                return;
+            }
+
             var rewardDefinition = CurrentTierConfig.Slices[PreSelectedSliceIndex];
 
             if (rewardDefinition is BombReward) // it is fine to handle bomb like this since it is the only special case.
@@ -165,10 +168,8 @@ namespace Vertigo.CardWheel.Controller
 
             foreach (var reward in _accumulatedRewards)
             {
-                reward.Definition.Grant(_playerController.PlayerData, reward.Amount);
+                reward.Definition.Grant(_playerController, reward.Amount);
             }
-
-            _playerController.Save();
 
             var rewards = new List<AccumulatedReward>(_accumulatedRewards);
             ResetState();
@@ -183,13 +184,11 @@ namespace Vertigo.CardWheel.Controller
                 return false;
             }
 
-            if (!_playerController.PlayerData.SpendCoins(ReviveCost))
+            if (!_playerController.SpendCoins(ReviveCost))
             {
-                Debug.LogWarning($"[CardWheelController] Not enough coins to revive. Required: {ReviveCost}, Balance: {_playerController.PlayerData.CoinBalance}");
+                Debug.LogWarning($"[CardWheelController] Not enough coins to revive. Required: {ReviveCost}, Balance: {_playerController.CoinBalance}");
                 return false;
             }
-
-            _playerController.Save();
 
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
@@ -208,7 +207,5 @@ namespace Vertigo.CardWheel.Controller
             ResetState();
             Debug.Log("[CardWheelController] Player gave up, full reset to zone 1");
         }
-
-        public IReadOnlyList<AccumulatedReward> GetAccumulatedRewards() => _accumulatedRewards.AsReadOnly();
     }
 }

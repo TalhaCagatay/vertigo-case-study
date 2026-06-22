@@ -12,6 +12,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
         [SerializeField] private Image                 iconImage;
         [SerializeField] private TMP_Text              amountText;
         [SerializeField] private HorizontalLayoutGroup horizontalLayoutGroup;
+        [SerializeField] private ContentSizeFitter     contentSizeFitter;
 
         private int _currentAmount;
 
@@ -25,6 +26,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
             iconImage             = GetComponentInChildren<Image>();
             amountText            = GetComponentInChildren<TMP_Text>();
             horizontalLayoutGroup = GetComponent<HorizontalLayoutGroup>();
+            contentSizeFitter     = GetComponent<ContentSizeFitter>();
         }
 #endif
 
@@ -51,7 +53,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
                      (
                       value =>
                       {
-                          _currentAmount  = Mathf.RoundToInt(value);
+                          _currentAmount = Mathf.RoundToInt(value);
                           amountText.SetText($"x{_currentAmount}");
                       },
                       startAmount,
@@ -61,6 +63,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
                 );
 
             horizontalLayoutGroup.enabled = false; // a small hack to disable layout to play the animation properly and enable it later
+            contentSizeFitter.enabled     = false;
             iconImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             seq.Join(iconImage.rectTransform.DOScale(1.3f, 0.2f).SetEase(Ease.OutBack));
             seq.Append(iconImage.rectTransform.DOScale(1f, 0.3f).SetEase(Ease.InBack));
@@ -71,6 +74,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
                  {
                      onComplete?.Invoke();
                      horizontalLayoutGroup.enabled = true;
+                     contentSizeFitter.enabled     = true;
                  }
                 );
         }

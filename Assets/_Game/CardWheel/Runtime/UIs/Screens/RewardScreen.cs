@@ -22,16 +22,8 @@ namespace Vertigo.CardWheel.UIs.Screens
         }
 #endif
 
-        private void Awake()
-        {
-            backButton.Clicked += OnBackButtonClicked;
-        }
-
-        private void OnDestroy()
-        {
-            backButton.Clicked -= OnBackButtonClicked;
-        }
-
+        private void Awake()               => backButton.Clicked += OnBackButtonClicked;
+        private void OnDestroy()           => backButton.Clicked -= OnBackButtonClicked;
         private void OnBackButtonClicked() => BackClicked?.Invoke();
 
         public void DisplayRewards(List<RewardItemData> rewards)

@@ -1,14 +1,14 @@
 using UnityEngine;
-using Vertigo.Player.Data;
+using Vertigo.Player;
 
 namespace Vertigo.CardWheel.Data.Rewards
 {
     [CreateAssetMenu(menuName = "Rewards/Coin Reward")]
     public class CoinReward : ARewardDefinition
     {
-        public override void Grant(PlayerData playerData, int value)
+        public override void Grant(PlayerController playerController, int value)
         {
-            playerData.AddCoins(value);
+            playerController.AddCoins(value);
         }
     }
 }
