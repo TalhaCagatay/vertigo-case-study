@@ -7,7 +7,7 @@ using Vertigo.Player.Data;
 
 namespace Vertigo.Player
 {
-    public class PlayerController : IController
+    public class PlayerController : AController
     {
         public event Action<int> BalanceUpdated;
 
@@ -17,18 +17,18 @@ namespace Vertigo.Player
 
         private PlayerData _playerData;
 
-        public IReadOnlyDictionary<string, int> Rewards       => _playerData.Rewards;
-        public int                              CoinBalance   => _playerData.CoinBalance;
-        public int                              Order         { get; }
-        public bool                             IsInitialized { get; private set; }
+        public IReadOnlyDictionary<string, int> Rewards     => _playerData.Rewards;
+        public int                              CoinBalance => _playerData.CoinBalance;
+        public int                              Order       { get; }
+
+        public override bool IsInitialized { get; protected set; }
 
         public PlayerController(DataController dataController)
         {
             _dataController = dataController;
-            Order = InitOrder.Number;
         }
 
-        public UniTask Initialize()
+        public override UniTask Initialize()
         {
             _playerData   = _dataController.Load(PLAYER_DATA_SAVE_KEY, new PlayerData());
             IsInitialized = true;

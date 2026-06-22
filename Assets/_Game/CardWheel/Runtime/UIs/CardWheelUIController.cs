@@ -15,7 +15,7 @@ using Vertigo.Player;
 
 namespace Vertigo.CardWheel.UIs
 {
-    public class CardWheelUIController : IController
+    public class CardWheelUIController : AController
     {
         private readonly UIController        _uiController;
         private readonly CardWheelController _cardWheelController;
@@ -27,8 +27,9 @@ namespace Vertigo.CardWheel.UIs
         private List<ZoneItemData> _zoneItems = new();
         private int                _zoneBarMaxZone;
 
-        public int  Order         { get; }
-        public bool IsInitialized { get; private set; }
+        public int Order { get; }
+
+        public override bool IsInitialized { get; protected set; }
 
         public CardWheelUIController(UIController uiController, CardWheelController cardWheelController, PlayerController playerController, ZoneWheelMapping zoneMapping)
         {
@@ -36,10 +37,9 @@ namespace Vertigo.CardWheel.UIs
             _cardWheelController = cardWheelController;
             _playerController    = playerController;
             _zoneMapping         = zoneMapping;
-            Order                = InitOrder.Number;
         }
 
-        public async UniTask Initialize()
+        public override async UniTask Initialize()
         {
             _screen = await _uiController.ShowScreenAsync<CardWheelScreen>();
 

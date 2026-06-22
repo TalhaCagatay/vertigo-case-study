@@ -3,21 +3,16 @@ using UnityEngine;
 
 namespace com.core
 {
-    public class GameConfigController : IController
+    public class GameConfigController : AController
     {
-        public int  Order         { get; }
-        public bool IsInitialized { get; private set; }
+        public          int  Order         { get; }
+        public override bool IsInitialized { get; protected set; }
 
-        public GameConfigController()
-        {
-            Order = InitOrder.Number;
-        }
-        
-        public UniTask Initialize()
+        public override UniTask Initialize()
         {
             Application.targetFrameRate  = 60;
             Debug.unityLogger.logEnabled = true;
-            
+
             IsInitialized = true;
             return UniTask.CompletedTask;
         }

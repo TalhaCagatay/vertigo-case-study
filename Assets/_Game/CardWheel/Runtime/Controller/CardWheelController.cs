@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace Vertigo.CardWheel.Controller
 {
-    public class CardWheelController : IController
+    public class CardWheelController : AController
     {
         // todo: get these from a config asset
         public int ReviveCost => 50;
@@ -35,8 +35,9 @@ namespace Vertigo.CardWheel.Controller
         public bool            IsSafeZone            => !CurrentTierConfig.HasBomb;
         public bool            CanLeave              => !IsSpinning && (IsSafeZone || IsSuperZone);
 
-        public int  Order         { get; }
-        public bool IsInitialized { get; private set; }
+        public int Order { get; }
+
+        public override bool IsInitialized { get; protected set; }
 
         private readonly ZoneWheelMapping        _zoneMapping;
         private readonly List<AccumulatedReward> _accumulatedRewards = new();
@@ -46,10 +47,9 @@ namespace Vertigo.CardWheel.Controller
         {
             _zoneMapping      = zoneMapping;
             _playerController = playerController;
-            Order             = InitOrder.Number;
         }
 
-        public UniTask Initialize()
+        public override UniTask Initialize()
         {
             ResetState();
             IsInitialized = true;

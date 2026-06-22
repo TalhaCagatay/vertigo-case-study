@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace com.core.ui
 {
-    public class UIController : IController
+    public class UIController : AController
     {
         private const string UI_PARENT_PATH    = "UIPrefabs/UIParent";
         private const string POPUPS_RESOURCES  = "UIPrefabs/Popups";
@@ -19,15 +19,11 @@ namespace com.core.ui
         private BaseScreen _currentScreen;
         private UIParent   _uiParent;
 
-        public int  Order         { get; }
-        public bool IsInitialized { get; private set; }
+        public int Order { get; }
 
-        public UIController()
-        {
-            Order = InitOrder.Number;
-        }
-        
-        public UniTask Initialize()
+        public override bool IsInitialized { get; protected set; }
+
+        public override UniTask Initialize()
         {
             var uiParentPrefab = Resources.Load<UIParent>(UI_PARENT_PATH);
             if (uiParentPrefab == null)
