@@ -1,2 +1,0 @@
-﻿There are some good and best practises with sprite atlas like grouping sprites that appear together in the same scene or UI screen BUT
-for this simple demo, I just put almost all provided textures into the same atlas.

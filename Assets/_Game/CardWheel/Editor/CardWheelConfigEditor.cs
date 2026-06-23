@@ -19,7 +19,7 @@ namespace Vertigo.CardWheel.Editor
         private ZoneWheelMappingEditorTab _zoneMappingTab;
         private RewardDefinitionEditorTab _rewardsTab;
 
-        [MenuItem("Window/CardWheel/Config Editor")]
+        [MenuItem("Vertigo/CardWheel/Config Editor")]
         public static void ShowWindow()
         {
             var window = GetWindow<CardWheelConfigEditor>("CardWheel Config Editor");
