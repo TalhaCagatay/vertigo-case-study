@@ -151,6 +151,12 @@ namespace Vertigo.CardWheel.Controller
 
         public void AdvanceZone()
         {
+            if (CurrentState == WheelState.Spinning)
+            {
+                Debug.LogWarning($"[CardWheelController] Can not advance zone while spinning");
+                return;
+            }
+            
             CurrentZone++;
             ResolveTierConfig();
             PreSelectedSliceIndex = -1;

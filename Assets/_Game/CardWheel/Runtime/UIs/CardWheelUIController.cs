@@ -108,14 +108,24 @@ namespace Vertigo.CardWheel.UIs
         private void RefreshAfterReset()
         {
             var config = _cardWheelController.CurrentTierConfig;
-            var zone   = _cardWheelController.CurrentZone;
-            _screen.SetupWheel(config, zone);
+            var zone   = _cardWheelController.CurrentZone; // should be 1
 
+            _screen.SetupWheel(config, zone);
             _screen.ResetWheel();
-            ClearZoneBar();
-            PopulateZoneBar(zone);
+
+            ResetZoneBar(zone);
+
             _screen.ClearRewardPanel();
             UpdateButtonStates();
+        }
+
+        private void ResetZoneBar(int currentZone)
+        {
+            _zoneItems.Clear();
+            BuildInitialZoneRange(currentZone);
+
+            _screen.SetupZoneBar(_zoneItems);
+            _screen.CenterZoneOnIndex(0, 0f);
         }
 
         private void SpinRequested()
@@ -259,8 +269,6 @@ namespace Vertigo.CardWheel.UIs
                  cfg.ZoneNumberFutureColor
                 );
         }
-
-        private void ClearZoneBar() => _zoneItems.Clear();
 
         private async void RewardsRequested()
         {
