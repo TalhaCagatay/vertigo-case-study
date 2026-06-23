@@ -88,7 +88,7 @@ Accessible from the Unity menu: **Vertigo → CardWheel → Config Editor**
 
 This is the central editor window for managing all CardWheel configuration assets. It features three tabbed panels, non-destructive editing with Apply/Revert, rename support, and unsaved-change protection dialogs.
 
-<!-- >>> SCREENSHOT PLACEHOLDER: CardWheel Config Editor window (all tabs) <<< -->
+![CardWheel Config Editor](ScreenShots/configs-window.png)
 
 #### Key Features
 
@@ -110,7 +110,7 @@ This is the central editor window for managing all CardWheel configuration asset
 
 ### Wheel Tier Config
 
-<!-- >>> SCREENSHOT PLACEHOLDER: Wheel Tier Config tab with an open asset <<< -->
+![Wheel Tier Config Tab](ScreenShots/configs-window-wheel-tiers.png)
 
 Defines the visual and gameplay properties of a wheel tier. Stored as `WheelTierConfig` ScriptableObjects under `Assets/_Game/CardWheel/Configs/`.
 
@@ -131,7 +131,7 @@ Defines the visual and gameplay properties of a wheel tier. Stored as `WheelTier
 
 ### Zone Wheel Mapping
 
-<!-- >>> SCREENSHOT PLACEHOLDER: Zone Wheel Mapping tab <<< -->
+![Zone Wheel Mapping Tab](ScreenShots/configs-window-zone-mapping.png)
 
 Maps zones to wheel tier configs. A single `ZoneWheelMapping` ScriptableObject defines which tier is active for each zone.
 
@@ -144,7 +144,7 @@ Maps zones to wheel tier configs. A single `ZoneWheelMapping` ScriptableObject d
 
 ### Reward Definitions
 
-<!-- >>> SCREENSHOT PLACEHOLDER: Reward Definitions tab <<< -->
+![Reward Definitions Tab](ScreenShots/configs-window-rewards.png)
 
 Individual reward assets of types: Coin, Chest, Skill Point, Cosmetic, and Bomb. Each reward has an icon, amount, label, and a unique ID.
 
@@ -158,7 +158,7 @@ The project uses **SRDebugger** for runtime debugging in builds. The options are
 
 **Tap the top-left corner of the screen 3 times** to open the SRDebugger panel.
 
-<!-- >>> SCREENSHOT PLACEHOLDER: SRDebugger panel showing SROptions <<< -->
+![SRDebugger Panel](ScreenShots/srdebugger.png)
 
 ### Available Options
 
