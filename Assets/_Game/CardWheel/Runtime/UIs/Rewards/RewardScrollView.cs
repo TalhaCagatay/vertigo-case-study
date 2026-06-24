@@ -33,7 +33,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
         {
             _entryLookup.Clear();
             RewardCell lastCell      = null;
-            var        rewardEntries = pool.Cast<RewardCell>().ToList();
+            var        rewardEntries = pool.Cast<RewardCell>();
             foreach (var entry in rewardEntries)
             {
                 if (string.IsNullOrEmpty(entry.Id)) continue;
@@ -47,7 +47,8 @@ namespace Vertigo.CardWheel.UIs.Rewards
         public void ClearRewards()
         {
             _rewardItems.Clear();
-            pool.Cast<RewardCell>().ToList().ForEach(cell => cell.Clear());
+            var rewardEntries = pool.Cast<RewardCell>();
+            foreach (var entry in rewardEntries) entry.Clear();
             UpdateData(new List<RewardItemData>());
         }
 

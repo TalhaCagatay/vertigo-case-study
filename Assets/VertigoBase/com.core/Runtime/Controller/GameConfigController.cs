@@ -5,7 +5,6 @@ namespace com.core
 {
     public class GameConfigController : AController
     {
-        public          int  Order         { get; }
         public override bool IsInitialized { get; protected set; }
 
         public override UniTask Initialize()

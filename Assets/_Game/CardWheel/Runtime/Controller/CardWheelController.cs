@@ -35,8 +35,6 @@ namespace Vertigo.CardWheel.Controller
         public bool            IsSafeZone            => !CurrentTierConfig.HasBomb;
         public bool            CanLeave              => !IsSpinning && (IsSafeZone || IsSuperZone);
 
-        public int Order { get; }
-
         public override bool IsInitialized { get; protected set; }
 
         private readonly ZoneWheelMapping        _zoneMapping;

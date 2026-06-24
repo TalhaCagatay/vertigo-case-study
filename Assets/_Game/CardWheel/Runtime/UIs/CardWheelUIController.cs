@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using Vertigo.CardWheel.Controller;
 using Vertigo.CardWheel.Data;
 using Vertigo.CardWheel.Data.Rewards;
@@ -27,8 +29,6 @@ namespace Vertigo.CardWheel.UIs
 
         private CardWheelScreen _screen;
         private RewardScreen    _rewardScreen;
-
-        public int Order { get; }
 
         public override bool IsInitialized { get; protected set; }
 
@@ -185,11 +185,13 @@ namespace Vertigo.CardWheel.UIs
 
         private void ShowLeaveSummaryPopup(List<AccumulatedReward> rewards)
         {
-            Debug.Log("[CardWheelUIController] Player left with rewards:");
+            var sb = new StringBuilder();
             foreach (var reward in rewards)
             {
-                Debug.Log($"  - {reward.Label} x{reward.Amount}");
+                sb.Append($"{reward.Label} x{reward.Amount}{Environment.NewLine}");
             }
+            
+            Debug.Log($"[CardWheelUIController] Player left with rewards:{Environment.NewLine}{sb}");
 
             RefreshAfterReset();
         }
@@ -232,8 +234,7 @@ namespace Vertigo.CardWheel.UIs
                 if (item.IsPastZone != shouldBePast)
                 {
                     var cfg = _cardWheelController.GetConfigForZone(item.ZoneNumber);
-                    _zoneItems[i] =
-                        BuildZoneItemData(item.ZoneNumber, currentZone, cfg);
+                    _zoneItems[i] = BuildZoneItemData(item.ZoneNumber, currentZone, cfg);
                 }
             }
         }
@@ -281,10 +282,8 @@ namespace Vertigo.CardWheel.UIs
 
         private void OnRewardBackClicked()
         {
-            if (_rewardScreen != null)
-                _rewardScreen.BackClicked -= OnRewardBackClicked;
-
-            _uiController.ShowScreenAsync<CardWheelScreen>().Forget();
+            _rewardScreen.BackClicked -= OnRewardBackClicked;
+            _uiController.ShowScreen<CardWheelScreen>();
         }
 
         private List<RewardItemData> BuildRewardItemsFromPlayerData(PlayerController playerController)
@@ -292,26 +291,16 @@ namespace Vertigo.CardWheel.UIs
             var items     = new List<RewardItemData>();
             var allSlices = GetAllSlices();
 
-            foreach (var kvp in playerController.Rewards)
-            {
-                var slice = FindSliceById(allSlices, kvp.Key);
-                if (slice != null)
-                {
-                    items.Add(new RewardItemData(slice.id, slice.Icon, slice.Label, kvp.Value));
-                }
-                else
-                {
-                    items.Add(new RewardItemData(kvp.Key, null, kvp.Key, kvp.Value));
-                }
-            }
-
             if (playerController.CoinBalance > 0)
             {
                 var coinSlice = FindCoinSlice(allSlices);
-                if (coinSlice != null)
-                {
-                    items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerController.CoinBalance));
-                }
+                items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerController.CoinBalance));
+            }
+            
+            foreach (var kvp in playerController.Rewards)
+            {
+                var slice = FindSliceById(allSlices, kvp.Key);
+                items.Add(new RewardItemData(slice.id, slice.Icon, slice.Label, kvp.Value));
             }
 
             return items;
@@ -330,23 +319,12 @@ namespace Vertigo.CardWheel.UIs
         private List<ARewardDefinition> GetAllSlices()
         {
             var slices = new List<ARewardDefinition>();
-            if (_zoneMapping.BronzeConfig != null)
-                slices.AddRange(_zoneMapping.BronzeConfig.Slices);
-            if (_zoneMapping.SilverConfig != null)
-                slices.AddRange(_zoneMapping.SilverConfig.Slices);
-            if (_zoneMapping.GoldConfig != null)
-                slices.AddRange(_zoneMapping.GoldConfig.Slices);
+            slices.AddRange(_zoneMapping.BronzeConfig.Slices);
+            slices.AddRange(_zoneMapping.SilverConfig.Slices);
+            slices.AddRange(_zoneMapping.GoldConfig.Slices);
             return slices;
         }
 
-        private static ARewardDefinition FindSliceById(List<ARewardDefinition> slices, string id)
-        {
-            foreach (var slice in slices)
-            {
-                if (slice.id == id)
-                    return slice;
-            }
-            return null;
-        }
+        private static ARewardDefinition FindSliceById(List<ARewardDefinition> slices, string id) => slices.Find(slice => slice.id == id);
     }
 }

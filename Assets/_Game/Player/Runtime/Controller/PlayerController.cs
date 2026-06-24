@@ -19,7 +19,6 @@ namespace Vertigo.Player
 
         public IReadOnlyDictionary<string, int> Rewards     => _playerData.Rewards;
         public int                              CoinBalance => _playerData.CoinBalance;
-        public int                              Order       { get; }
 
         public override bool IsInitialized { get; protected set; }
 

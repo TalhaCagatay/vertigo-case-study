@@ -19,8 +19,6 @@ namespace com.core.ui
         private BaseScreen _currentScreen;
         private UIParent   _uiParent;
 
-        public int Order { get; }
-
         public override bool IsInitialized { get; protected set; }
 
         public override UniTask Initialize()
