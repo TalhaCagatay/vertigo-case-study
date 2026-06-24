@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Vertigo.CardWheel.Data.Rewards
 {
-    [CreateAssetMenu(menuName = "Rewards/Skill Point Reward")]
+    [CreateAssetMenu(menuName = "Wheel Slice/Skill Point Reward")]
     public class SkillPointReward : ARewardDefinition
     {
 

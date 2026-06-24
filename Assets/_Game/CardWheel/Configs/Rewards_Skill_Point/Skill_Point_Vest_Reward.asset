@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: a315d2e4e824e7241973f7b49e5603db, type: 3}
   amount: 5
   label: Vest Skill Point
+  viewPrefab: {fileID: 260623904327186784, guid: b356495d737f1ac40b5d2070e9665f8f, type: 3}

@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 9b5438a6b70919f4a98b71d0372a3040, type: 3}
   amount: 5
   label: SMG Skill Point
+  viewPrefab: {fileID: 260623904327186784, guid: b356495d737f1ac40b5d2070e9665f8f, type: 3}

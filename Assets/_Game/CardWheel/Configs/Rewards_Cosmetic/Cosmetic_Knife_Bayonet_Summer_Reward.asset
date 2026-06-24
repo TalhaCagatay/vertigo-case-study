@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: b0ea6d6b47938b64196f0fdbb4de433d, type: 3}
   amount: 1
   label: Summer Vice Bayonet
+  viewPrefab: {fileID: 260623904327186784, guid: b356495d737f1ac40b5d2070e9665f8f, type: 3}

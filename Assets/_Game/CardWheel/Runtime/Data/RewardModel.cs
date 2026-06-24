@@ -5,7 +5,7 @@ using Vertigo.CardWheel.Data.Rewards;
 namespace Vertigo.CardWheel.Data
 {
     [Serializable]
-    public class AccumulatedReward
+    public class RewardModel
     {
         public ARewardDefinition Definition { get; }
         public Sprite            Icon       { get; }
@@ -13,7 +13,7 @@ namespace Vertigo.CardWheel.Data
         public string            Label      { get; }
         public int               Amount     { get; private set; }
 
-        public AccumulatedReward(ARewardDefinition definition, int amount)
+        public RewardModel(ARewardDefinition definition, int amount)
         {
             Definition = definition;
             Id         = definition.id;

@@ -9,7 +9,7 @@ namespace Vertigo.CardWheel.Editor
         {
             WheelTiers,
             ZoneMapping,
-            Rewards
+            Slices
         }
 
         private Tab     _currentTab = Tab.WheelTiers;
@@ -17,7 +17,7 @@ namespace Vertigo.CardWheel.Editor
 
         private WheelTierConfigEditorTab  _wheelTierTab;
         private ZoneWheelMappingEditorTab _zoneMappingTab;
-        private RewardDefinitionEditorTab _rewardsTab;
+        private WheelSliceDefinitionEditorTab _wheelSlicesTab;
 
         [MenuItem("Vertigo/CardWheel/Config Editor")]
         public static void ShowWindow()
@@ -30,14 +30,14 @@ namespace Vertigo.CardWheel.Editor
         {
             _wheelTierTab   = new WheelTierConfigEditorTab();
             _zoneMappingTab = new ZoneWheelMappingEditorTab();
-            _rewardsTab     = new RewardDefinitionEditorTab();
+            _wheelSlicesTab     = new WheelSliceDefinitionEditorTab();
         }
 
         private void OnDisable()
         {
             _wheelTierTab.Dispose();
             _zoneMappingTab.Dispose();
-            _rewardsTab.Dispose();
+            _wheelSlicesTab.Dispose();
         }
 
         private void OnGUI()
@@ -55,8 +55,8 @@ namespace Vertigo.CardWheel.Editor
                 case Tab.ZoneMapping:
                     _zoneMappingTab.OnGUI(this);
                     break;
-                case Tab.Rewards:
-                    _rewardsTab.OnGUI(this);
+                case Tab.Slices:
+                    _wheelSlicesTab.OnGUI(this);
                     break;
             }
 
@@ -114,7 +114,7 @@ namespace Vertigo.CardWheel.Editor
             {
                 Tab.WheelTiers  => _wheelTierTab,
                 Tab.ZoneMapping => _zoneMappingTab,
-                Tab.Rewards     => _rewardsTab,
+                Tab.Slices     => _wheelSlicesTab,
                 _               => null
             };
         }

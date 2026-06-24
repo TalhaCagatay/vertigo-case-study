@@ -4,6 +4,7 @@ using Vertigo.CardWheel.UIs.Rewards;
 using com.core.ui;
 using UnityEngine;
 using Vertigo.CardWheel.Component;
+using Vertigo.CardWheel.Data;
 
 namespace Vertigo.CardWheel.UIs.Screens
 {
@@ -26,12 +27,12 @@ namespace Vertigo.CardWheel.UIs.Screens
         private void OnDestroy()           => backButton.Clicked -= OnBackButtonClicked;
         private void OnBackButtonClicked() => BackClicked?.Invoke();
 
-        public void DisplayRewards(List<RewardItemData> rewards)
+        public void DisplayRewards(List<RewardModel> rewards)
         {
             rewardScrollView.ClearRewards();
             foreach (var reward in rewards)
             {
-                rewardScrollView.AddOrUpdateReward(reward.Icon, reward.Amount, reward.Id, reward.Label);
+                rewardScrollView.AddOrUpdateReward(reward.Definition, reward.Amount);
             }
         }
     }

@@ -3,7 +3,7 @@ using Vertigo.Player;
 
 namespace Vertigo.CardWheel.Data.Rewards
 {
-    [CreateAssetMenu(menuName = "Rewards/Coin Reward")]
+    [CreateAssetMenu(menuName = "Wheel Slice/Coin Reward")]
     public class CoinReward : ARewardDefinition
     {
         public override void Grant(PlayerController playerController, int value)

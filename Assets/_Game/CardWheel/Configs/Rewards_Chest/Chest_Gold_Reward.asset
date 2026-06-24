@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 4323f446219034043b30760c96f1eb47, type: 3}
   amount: 5
   label: Gold Chest
+  viewPrefab: {fileID: 260623904327186784, guid: b356495d737f1ac40b5d2070e9665f8f, type: 3}

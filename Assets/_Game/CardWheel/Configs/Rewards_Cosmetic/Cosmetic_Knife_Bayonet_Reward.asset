@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: bb0a10e322d56db4693c97e06267803a, type: 3}
   amount: 1
   label: Easter Time Bayonet
+  viewPrefab: {fileID: 260623904327186784, guid: b356495d737f1ac40b5d2070e9665f8f, type: 3}

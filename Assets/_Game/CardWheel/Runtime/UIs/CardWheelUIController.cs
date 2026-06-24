@@ -81,7 +81,7 @@ namespace Vertigo.CardWheel.UIs
             UpdateButtonStates();
         }
 
-        private void RewardsUpdated(List<AccumulatedReward> rewards)
+        private void RewardsUpdated(List<RewardModel> rewards)
         {
             if (rewards.Count == 0) _screen.ClearRewardPanel();
         }
@@ -150,11 +150,12 @@ namespace Vertigo.CardWheel.UIs
 
             if (_cardWheelController.CurrentState == WheelState.GameOver) return;
 
-            var scaledAmount = config.GetScaledRewardAmount(_cardWheelController.CurrentZone, landedSlice.Amount);
+            var rewardDefinition = landedSlice as ARewardDefinition;
+            var scaledAmount     = config.GetScaledRewardAmount(_cardWheelController.CurrentZone, rewardDefinition.Amount);
 
             var sliceWorldPos = _screen.GetSliceIconWorldPosition(preSelectedIndex);
 
-            _screen.AddOrUpdateReward(landedSlice.Icon, 0, landedSlice.id, landedSlice.Label);
+            _screen.AddOrUpdateReward(rewardDefinition, 0);
 
             _screen.PlayRewardAnimation
                 (
@@ -183,14 +184,14 @@ namespace Vertigo.CardWheel.UIs
             ShowLeaveSummaryPopup(rewards);
         }
 
-        private void ShowLeaveSummaryPopup(List<AccumulatedReward> rewards)
+        private void ShowLeaveSummaryPopup(List<RewardModel> rewards)
         {
             var sb = new StringBuilder();
             foreach (var reward in rewards)
             {
                 sb.Append($"{reward.Label} x{reward.Amount}{Environment.NewLine}");
             }
-            
+
             Debug.Log($"[CardWheelUIController] Player left with rewards:{Environment.NewLine}{sb}");
 
             RefreshAfterReset();
@@ -286,27 +287,27 @@ namespace Vertigo.CardWheel.UIs
             _uiController.ShowScreen<CardWheelScreen>();
         }
 
-        private List<RewardItemData> BuildRewardItemsFromPlayerData(PlayerController playerController)
+        private List<RewardModel> BuildRewardItemsFromPlayerData(PlayerController playerController)
         {
-            var items     = new List<RewardItemData>();
+            var items     = new List<RewardModel>();
             var allSlices = GetAllSlices();
 
             if (playerController.CoinBalance > 0)
             {
                 var coinSlice = FindCoinSlice(allSlices);
-                items.Add(new RewardItemData(coinSlice.id, coinSlice.Icon, coinSlice.Label, playerController.CoinBalance));
+                items.Add(new RewardModel(coinSlice as ARewardDefinition, playerController.CoinBalance));
             }
-            
+
             foreach (var kvp in playerController.Rewards)
             {
                 var slice = FindSliceById(allSlices, kvp.Key);
-                items.Add(new RewardItemData(slice.id, slice.Icon, slice.Label, kvp.Value));
+                items.Add(new RewardModel(slice as ARewardDefinition, kvp.Value));
             }
 
             return items;
         }
 
-        private static ARewardDefinition FindCoinSlice(List<ARewardDefinition> slices)
+        private static AWheelSliceDefinition FindCoinSlice(List<AWheelSliceDefinition> slices)
         {
             foreach (var slice in slices)
             {
@@ -316,15 +317,15 @@ namespace Vertigo.CardWheel.UIs
             return null;
         }
 
-        private List<ARewardDefinition> GetAllSlices()
+        private List<AWheelSliceDefinition> GetAllSlices()
         {
-            var slices = new List<ARewardDefinition>();
+            var slices = new List<AWheelSliceDefinition>();
             slices.AddRange(_zoneMapping.BronzeConfig.Slices);
             slices.AddRange(_zoneMapping.SilverConfig.Slices);
             slices.AddRange(_zoneMapping.GoldConfig.Slices);
             return slices;
         }
 
-        private static ARewardDefinition FindSliceById(List<ARewardDefinition> slices, string id) => slices.Find(slice => slice.id == id);
+        private static AWheelSliceDefinition FindSliceById(List<AWheelSliceDefinition> slices, string id) => slices.Find(slice => slice.id == id);
     }
 }

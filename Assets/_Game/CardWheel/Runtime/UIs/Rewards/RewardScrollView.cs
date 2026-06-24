@@ -6,24 +6,26 @@ using Lean.Pool;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
+using Vertigo.CardWheel.Data;
+using Vertigo.CardWheel.Data.Rewards;
 using Random = UnityEngine.Random;
 
 namespace Vertigo.CardWheel.UIs.Rewards
 {
-    public class RewardScrollView : FancyScrollRect<RewardItemData, RewardContext>
+    public class RewardScrollView : FancyScrollRect<RewardModel, RewardContext>
     {
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] private float      cellSize    = 100f;
         [SerializeField] private float      flyDuration = 0.6f;
         [SerializeField] private GameObject flyingIconPrefab;
 
-        private readonly Dictionary<string, RewardCell>     _entryLookup = new();
-        private readonly Dictionary<string, RewardItemData> _rewardItems = new();
+        private readonly Dictionary<string, RewardCell>  _entryLookup = new();
+        private readonly Dictionary<string, RewardModel> _rewardItems = new();
 
         protected override GameObject CellPrefab => cellPrefab;
         protected override float      CellSize   => cellSize;
 
-        private void UpdateData(IList<RewardItemData> items)
+        private void UpdateData(IList<RewardModel> items)
         {
             UpdateContents(items);
             RebuildLookup();
@@ -49,24 +51,24 @@ namespace Vertigo.CardWheel.UIs.Rewards
             _rewardItems.Clear();
             var rewardEntries = pool.Cast<RewardCell>();
             foreach (var entry in rewardEntries) entry.Clear();
-            UpdateData(new List<RewardItemData>());
+            UpdateData(new List<RewardModel>());
         }
 
-        public void AddOrUpdateReward(Sprite icon, int amount, string id, string label)
+        public void AddOrUpdateReward(ARewardDefinition rewardDefinition, int amount)
         {
-            if (_rewardItems.TryGetValue(id, out var existing))
+            if (_rewardItems.TryGetValue(rewardDefinition.Id, out var existing))
             {
-                existing.Amount += amount;
+                existing.Add(amount);
             }
             else
             {
-                _rewardItems.Add(id, new RewardItemData(id, icon, label, amount));
+                _rewardItems.Add(rewardDefinition.Id, new RewardModel(rewardDefinition, amount));
             }
 
-            UpdateData(new List<RewardItemData>(_rewardItems.Values));
+            UpdateData(new List<RewardModel>(_rewardItems.Values));
         }
 
-        public bool TryGetRewardItem(string id, out RewardItemData item) => _rewardItems.TryGetValue(id, out item);
+        public bool TryGetRewardItem(string id, out RewardModel item) => _rewardItems.TryGetValue(id, out item);
 
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete)
         {
@@ -86,7 +88,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
                 return;
             }
 
-            rewardItem.Amount += addedAmount;
+            rewardItem.Add(addedAmount);
 
             if (!_entryLookup.TryGetValue(rewardId, out var targetEntry))
             {

@@ -4,31 +4,32 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using Vertigo.CardWheel.Data.Rewards;
+using Vertigo.CardWheel.Data;
 
 namespace Vertigo.CardWheel.Editor
 {
-    public class RewardDefinitionEditorTab : EditorTabBase<ARewardDefinition>
+    public class WheelSliceDefinitionEditorTab : EditorTabBase<AWheelSliceDefinition>
     {
-        private static readonly Lazy<(Type Type, string Label)[]> _rewardTypes = new(() =>
-        {
-            var baseType = typeof(ARewardDefinition);
-            return AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a =>
-                {
-                    try { return a.GetTypes(); }
-                    catch (ReflectionTypeLoadException) { return Type.EmptyTypes; }
-                })
-                .Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t))
-                .OrderBy(t => t.Name)
-                .Select(t => (t, ObjectNames.NicifyVariableName(t.Name)))
-                .ToArray();
-        });
+        private static readonly Lazy<(Type Type, string Label)[]> _rewardTypes = new
+            (
+             () =>
+             {
+                 var baseType = typeof(AWheelSliceDefinition);
+                 return AppDomain.CurrentDomain.GetAssemblies().SelectMany
+                     (
+                      a =>
+                      {
+                          try { return a.GetTypes(); }
+                          catch (ReflectionTypeLoadException) { return Type.EmptyTypes; }
+                      }
+                     ).Where(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t)).OrderBy(t => t.Name).Select(t => (t, ObjectNames.NicifyVariableName(t.Name))).ToArray();
+             }
+            );
 
-        private int                     _selectedRewardTypeIndex = 0;
-        private int                     _typeFilterIndex         = 0;
-        private List<ARewardDefinition> _allAssets               = new List<ARewardDefinition>();
-        private bool                    _showCreatePopup         = false;
+        private int                         _selectedRewardTypeIndex = 0;
+        private int                         _typeFilterIndex         = 0;
+        private List<AWheelSliceDefinition> _allAssets               = new List<AWheelSliceDefinition>();
+        private bool                        _showCreatePopup         = false;
 
         protected override string AssetTypeLabel       => "Reward";
         protected override string CreateDialogTitle    => "Create Reward";
@@ -39,8 +40,9 @@ namespace Vertigo.CardWheel.Editor
 
         protected override void RefreshAssetList()
         {
-            var allGuids = AssetDatabase.FindAssets("t:ARewardDefinition");
-            _allAssets = allGuids.Select(g => AssetDatabase.LoadAssetAtPath<ARewardDefinition>(AssetDatabase.GUIDToAssetPath(g))).Where(a => a != null).OrderBy(a => a.name).ToList();
+            var allGuids = AssetDatabase.FindAssets("t:AWheelSliceDefinition");
+            _allAssets = allGuids.Select(g => AssetDatabase.LoadAssetAtPath<AWheelSliceDefinition>(AssetDatabase.GUIDToAssetPath(g))).Where(a => a != null).OrderBy
+                (a => a.name).ToList();
 
             ApplyTypeFilter();
         }
@@ -163,11 +165,11 @@ namespace Vertigo.CardWheel.Editor
 
             if (string.IsNullOrEmpty(path)) return;
 
-            var template = (ARewardDefinition)ScriptableObject.CreateInstance(rewardType);
+            var template = (AWheelSliceDefinition)ScriptableObject.CreateInstance(rewardType);
             template.name = System.IO.Path.GetFileNameWithoutExtension(path);
 
             _buffer?.Dispose();
-            _buffer = new ConfigBuffer<ARewardDefinition>(template);
+            _buffer = new ConfigBuffer<AWheelSliceDefinition>(template);
             _buffer.SetAssetPath(path);
             _selectedIndex = -1;
         }

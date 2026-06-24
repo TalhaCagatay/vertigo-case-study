@@ -4,10 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
+using Vertigo.CardWheel.Data;
 
 namespace Vertigo.CardWheel.UIs.Rewards
 {
-    public class RewardCell : FancyScrollRectCell<RewardItemData, RewardContext>
+    public class RewardCell : FancyScrollRectCell<RewardModel, RewardContext>
     {
         [SerializeField] private Image                 iconImage;
         [SerializeField] private TMP_Text              amountText;
@@ -30,7 +31,7 @@ namespace Vertigo.CardWheel.UIs.Rewards
         }
 #endif
 
-        public override void UpdateContent(RewardItemData itemData)
+        public override void UpdateContent(RewardModel itemData)
         {
             Id               = itemData.Id;
             iconImage.sprite = itemData.Icon;

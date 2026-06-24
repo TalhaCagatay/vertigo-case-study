@@ -1,7 +1,9 @@
 using System;
 using Vertigo.CardWheel.Data;
 using DG.Tweening;
+using Lean.Pool;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Vertigo.CardWheel.UIs.Screens
@@ -21,19 +23,33 @@ namespace Vertigo.CardWheel.UIs.Screens
         {
             spinnerImage    = GetComponent<Image>();
             slicesContainer = transform;
-            sliceViews      = slicesContainer.GetComponentsInChildren<CardWheelSliceView>();
+            sliceViews      = new CardWheelSliceView[slicesContainer.childCount];
         }
 #endif
 
         public void Setup(WheelTierConfig config, int currentZone)
         {
+            ClearViews(sliceViews);
+
+            Assert.AreEqual(slicesContainer.childCount, config.Slices.Length, "[CardWheelSpinner] slicesContainer.childCount != config.Slices.Length");
+
             spinnerImage.sprite = config.SpinnerSprite;
 
-            for (int i = 0; i < Mathf.Min(sliceViews.Length, config.Slices.Length); i++)
+            for (int i = 0; i < slicesContainer.childCount; i++)
             {
-                var sliceData    = config.Slices[i];
-                var scaledAmount = config.GetScaledRewardAmount(currentZone, sliceData.Amount);
-                sliceViews[i].Setup(sliceData, scaledAmount);
+                var sliceData = config.Slices[i];
+                // var scaledAmount = config.GetScaledRewardAmount(currentZone, sliceData.Amount);
+                sliceViews[i] = LeanPool.Spawn(sliceData.ViewPrefab, slicesContainer.GetChild(i));
+                sliceViews[i].Setup(sliceData);
+            }
+        }
+
+        private void ClearViews(CardWheelSliceView[] sliceViews)
+        {
+            foreach (CardWheelSliceView cardWheelSliceView in sliceViews)
+            {
+                if (cardWheelSliceView == null) continue;
+                LeanPool.Despawn(cardWheelSliceView);
             }
         }
 

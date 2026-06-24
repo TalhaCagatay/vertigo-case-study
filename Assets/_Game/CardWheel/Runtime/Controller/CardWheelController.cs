@@ -17,14 +17,14 @@ namespace Vertigo.CardWheel.Controller
         public int ReviveCost => 50;
         public int SpinCost   => 10;
 
-        public event Action<List<AccumulatedReward>> RewardsUpdated;
-        public event Action<ARewardDefinition>       SpinCompleted;
-        public event Action<ARewardDefinition>       RewardCollected;
-        public event Action<WheelState>              StateChanged;
-        public event Action<int>                     ZoneChanged;
-        public event Action<int>                     SpinStarted;
-        public event Action                          BombDetonated;
-        public event Action                          RewardsReset;
+        public event Action<List<RewardModel>>     RewardsUpdated;
+        public event Action<AWheelSliceDefinition> SpinCompleted;
+        public event Action<AWheelSliceDefinition> RewardCollected;
+        public event Action<WheelState>            StateChanged;
+        public event Action<int>                   ZoneChanged;
+        public event Action<int>                   SpinStarted;
+        public event Action                        BombDetonated;
+        public event Action                        RewardsReset;
 
         public WheelState      CurrentState          { get; private set; } = WheelState.Idle;
         public int             CurrentZone           { get; private set; } = 1;
@@ -37,9 +37,9 @@ namespace Vertigo.CardWheel.Controller
 
         public override bool IsInitialized { get; protected set; }
 
-        private readonly ZoneWheelMapping        _zoneMapping;
-        private readonly List<AccumulatedReward> _accumulatedRewards = new();
-        private readonly PlayerController        _playerController;
+        private readonly ZoneWheelMapping  _zoneMapping;
+        private readonly List<RewardModel> _rewardModels = new();
+        private readonly PlayerController  _playerController;
 
         public CardWheelController(ZoneWheelMapping zoneMapping, PlayerController playerController)
         {
@@ -58,20 +58,20 @@ namespace Vertigo.CardWheel.Controller
         private void ResetState()
         {
             CurrentZone = 1;
-            _accumulatedRewards.Clear();
+            _rewardModels.Clear();
             PreSelectedSliceIndex = -1;
             SetState(WheelState.Idle);
             ResolveTierConfig();
             ZoneChanged?.Invoke(CurrentZone);
             RewardsReset?.Invoke();
-            RewardsUpdated?.Invoke(new List<AccumulatedReward>(_accumulatedRewards));
+            RewardsUpdated?.Invoke(new List<RewardModel>(_rewardModels));
         }
 
         private void ResolveTierConfig() => CurrentTierConfig = _zoneMapping.GetConfigForZone(CurrentZone);
 
         public WheelTierConfig GetConfigForZone(int zone) => _zoneMapping.GetConfigForZone(zone);
 
-        private void SetState(WheelState newState)
+        public void SetState(WheelState newState)
         {
             CurrentState = newState;
             StateChanged?.Invoke(newState);
@@ -114,37 +114,31 @@ namespace Vertigo.CardWheel.Controller
                 return;
             }
 
-            var rewardDefinition = CurrentTierConfig.Slices[PreSelectedSliceIndex];
-
-            if (rewardDefinition is BombReward) // it is fine to handle bomb like this since it is the only special case.
-            {
-                SetState(WheelState.GameOver);
-                BombDetonated?.Invoke();
-            }
-            else
-            {
-                var scaledAmount = CurrentTierConfig.GetScaledRewardAmount(CurrentZone, rewardDefinition.Amount);
-
-                AddReward(rewardDefinition, scaledAmount);
-                SetState(WheelState.Result);
-            }
-            SpinCompleted?.Invoke(rewardDefinition);
+            var sliceDefinition = CurrentTierConfig.Slices[PreSelectedSliceIndex];
+            sliceDefinition.Apply(this);
+            SpinCompleted?.Invoke(sliceDefinition);
         }
 
-        private void AddReward(ARewardDefinition rewardDefinition, int scaledAmount)
+        public void SetGameOver()
         {
-            var existing = _accumulatedRewards.Find(r => r.Id == rewardDefinition.id);
+            SetState(WheelState.GameOver);
+            BombDetonated?.Invoke();
+        }
+
+        public void AddReward(ARewardDefinition rewardDefinition, int scaledAmount)
+        {
+            var existing = _rewardModels.Find(r => r.Id == rewardDefinition.id);
             if (existing != null)
             {
                 existing.Add(scaledAmount);
             }
             else
             {
-                _accumulatedRewards.Add(new AccumulatedReward(rewardDefinition, scaledAmount));
+                _rewardModels.Add(new RewardModel(rewardDefinition, scaledAmount));
             }
 
             RewardCollected?.Invoke(rewardDefinition);
-            RewardsUpdated?.Invoke(new List<AccumulatedReward>(_accumulatedRewards));
+            RewardsUpdated?.Invoke(new List<RewardModel>(_rewardModels));
         }
 
         public void AdvanceZone()
@@ -154,7 +148,7 @@ namespace Vertigo.CardWheel.Controller
                 Debug.LogWarning($"[CardWheelController] Can not advance zone while spinning");
                 return;
             }
-            
+
             CurrentZone++;
             ResolveTierConfig();
             PreSelectedSliceIndex = -1;
@@ -162,20 +156,20 @@ namespace Vertigo.CardWheel.Controller
             ZoneChanged?.Invoke(CurrentZone);
         }
 
-        public List<AccumulatedReward> CollectRewardsAndLeave()
+        public List<RewardModel> CollectRewardsAndLeave()
         {
             if (!CanLeave)
             {
                 Debug.LogWarning("[CardWheelController] Cannot leave right now");
-                return new List<AccumulatedReward>(_accumulatedRewards);
+                return new List<RewardModel>(_rewardModels);
             }
 
-            foreach (var reward in _accumulatedRewards)
+            foreach (var reward in _rewardModels)
             {
                 reward.Definition.Grant(_playerController, reward.Amount);
             }
 
-            var rewards = new List<AccumulatedReward>(_accumulatedRewards);
+            var rewards = new List<RewardModel>(_rewardModels);
             ResetState();
             return rewards;
         }

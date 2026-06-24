@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Vertigo.CardWheel.Data.Rewards
 {
-    [CreateAssetMenu(menuName = "Rewards/Cosmetic Reward")]
+    [CreateAssetMenu(menuName = "Wheel Slice/Cosmetic Reward")]
     public class CosmeticReward : ARewardDefinition
     {
 

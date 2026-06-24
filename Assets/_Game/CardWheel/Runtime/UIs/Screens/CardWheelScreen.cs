@@ -6,6 +6,7 @@ using Vertigo.CardWheel.UIs.ZoneScroll;
 using com.core.ui;
 using UnityEngine;
 using Vertigo.CardWheel.Component;
+using Vertigo.CardWheel.Data.Rewards;
 
 namespace Vertigo.CardWheel.UIs.Screens
 {
@@ -68,7 +69,7 @@ namespace Vertigo.CardWheel.UIs.Screens
 
         public void ClearRewardPanel() => rewardScrollView.ClearRewards();
 
-        public void AddOrUpdateReward(Sprite icon, int amount, string id, string label) => rewardScrollView.AddOrUpdateReward(icon, amount, id, label);
+        public void AddOrUpdateReward(ARewardDefinition rewardDefinition, int amount) => rewardScrollView.AddOrUpdateReward(rewardDefinition, amount);
 
         public void PlayRewardAnimation(Vector3 sliceWorldPosition, Sprite sliceIcon, string rewardId, int addedAmount, Action onComplete) => rewardScrollView.PlayRewardAnimation
             (sliceWorldPosition, sliceIcon, rewardId, addedAmount, onComplete);
